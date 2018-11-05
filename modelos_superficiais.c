@@ -16,22 +16,38 @@ int main(){
 		for(i = 0; i<15;i++){
 			for(j = 0; j<551;j++){
 				if(i == 0 && j<=10){
+					printf("\n %s Modelo A%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo A%d",marcas[i],j);
+					printf("\n %s Modelo B%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo B%d",marcas[i],j);
 					printf("\n %s Modelo C%d",marcas[i],j);
 					fprintf(arq_texto, " \n %s Modelo C%d",marcas[i],j);
 				}
 			
 				if(i == 1 &&  j>=10 && j<=19){
+					printf("\n %s Modelo A%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo A%d",marcas[i],j);
+					printf("\n %s Modelo B%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo B%d",marcas[i],j);
 					printf("\n %s Modelo C%d",marcas[i],j);
 					fprintf(arq_texto, " \n %s Modelo C%d",marcas[i],j);
 
 				}
 				if(i == 2 && j>15 && j<=19 ){
+					printf("\n %s Modelo A%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo A%d",marcas[i],j);
+					printf("\n %s Modelo B%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo B%d",marcas[i],j);
 					printf("\n %s Modelo C%d",marcas[i],j);
 					fprintf(arq_texto, " \n %s Modelo C%d",marcas[i],j);
 
 
 				}
 				if(i == 3 && j>15 && j<=19 ){
+					printf("\n %s Modelo A%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo A%d",marcas[i],j);
+					printf("\n %s Modelo B%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo B%d",marcas[i],j);
 					printf("\n %s Modelo C%d",marcas[i],j);
 					fprintf(arq_texto, " \n %s Modelo C%d",marcas[i],j);
 
@@ -39,6 +55,10 @@ int main(){
 				}
 					
 				if(i == 4 && j>19 && j<=30 ){
+					printf("\n %s Modelo A%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo A%d",marcas[i],j);
+					printf("\n %s Modelo B%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo B%d",marcas[i],j);
 					printf("\n %s Modelo C%d",marcas[i],j);
 					fprintf(arq_texto, " \n %s Modelo C%d",marcas[i],j);
 
@@ -46,6 +66,10 @@ int main(){
 			}	
 			
 				if(i == 5 && j>30 && j<=50 ){
+					printf("\n %s Modelo A%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo A%d",marcas[i],j);
+					printf("\n %s Modelo B%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo B%d",marcas[i],j);
 					printf("\n %s Modelo C%d",marcas[i],j);
 					fprintf(arq_texto, " \n %s Modelo C%d",marcas[i],j);
 
@@ -53,12 +77,19 @@ int main(){
 			}	
 
 			if(i == 6 && j>50 && j<=80 ){
+					printf("\n %s Modelo A%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo A%d",marcas[i],j);
+					printf("\n %s Modelo B%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo B%d",marcas[i],j);
 					printf("\n %s Modelo C%d",marcas[i],j);
 					fprintf(arq_texto, " \n %s Modelo C%d",marcas[i],j);
-
 			
 			}	
 			if(i == 7 && j>80 && j<=100 ){
+					printf("\n %s Modelo A%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo A%d",marcas[i],j);
+					printf("\n %s Modelo B%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo B%d",marcas[i],j);
 					printf("\n %s Modelo C%d",marcas[i],j);
 					fprintf(arq_texto, " \n %s Modelo C%d",marcas[i],j);
 
@@ -66,30 +97,44 @@ int main(){
 			}	
 			
 			if(i == 8 && j>100 && j<=160 ){
+					printf("\n %s Modelo A%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo A%d",marcas[i],j);
+					printf("\n %s Modelo B%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo B%d",marcas[i],j);
 					printf("\n %s Modelo C%d",marcas[i],j);
 					fprintf(arq_texto, " \n %s Modelo C%d",marcas[i],j);
 
 			
 			}	
 			if(i == 9 && j>160 && j<=200 ){
+					printf("\n %s Modelo A%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo A%d",marcas[i],j);
+					printf("\n %s Modelo B%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo B%d",marcas[i],j);
 					printf("\n %s Modelo C%d",marcas[i],j);
 					fprintf(arq_texto, " \n %s Modelo C%d",marcas[i],j);
+
 
 			
 			}	
 			if(i == 10 && j>200 && j<=250 ){
+					printf("\n %s Modelo A%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo A%d",marcas[i],j);
+					printf("\n %s Modelo B%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo B%d",marcas[i],j);
 					printf("\n %s Modelo C%d",marcas[i],j);
 					fprintf(arq_texto, " \n %s Modelo C%d",marcas[i],j);
 
 			
 			}	
 			if(i == 11 && j>250 && j<=300 ){
+					printf("\n %s Modelo A%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo A%d",marcas[i],j);
+					printf("\n %s Modelo B%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo B%d",marcas[i],j);
 					printf("\n %s Modelo C%d",marcas[i],j);
 					fprintf(arq_texto, " \n %s Modelo C%d",marcas[i],j);
 
-			
-			}	
-			if(i == 12 && j>350 && j<=400 ){
 					printf("\n %s Modelo C%d",marcas[i],j);
 					fprintf(arq_texto, " \n %s Modelo C%d",marcas[i],j);
 
@@ -97,6 +142,10 @@ int main(){
 			}	
 			
 			if(i ==  13 && j>400 && j<=450 ){
+					printf("\n %s Modelo A%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo A%d",marcas[i],j);
+					printf("\n %s Modelo B%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo B%d",marcas[i],j);
 					printf("\n %s Modelo C%d",marcas[i],j);
 					fprintf(arq_texto, " \n %s Modelo C%d",marcas[i],j);
 
@@ -104,6 +153,10 @@ int main(){
 			}	
 			
 			if(i == 14 && j>450 && j<=500 ){
+					printf("\n %s Modelo A%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo A%d",marcas[i],j);
+					printf("\n %s Modelo B%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo B%d",marcas[i],j);
 					printf("\n %s Modelo C%d",marcas[i],j);
 					fprintf(arq_texto, " \n %s Modelo C%d",marcas[i],j);
 
@@ -111,8 +164,13 @@ int main(){
 			}
 
 			if(i == 15 && j>500 && j<=550 ){
+					printf("\n %s Modelo A%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo A%d",marcas[i],j);
+					printf("\n %s Modelo B%d",marcas[i],j);
+					fprintf(arq_texto, " \n %s Modelo B%d",marcas[i],j);
 					printf("\n %s Modelo C%d",marcas[i],j);
 					fprintf(arq_texto, " \n %s Modelo C%d",marcas[i],j);
+
 
 			
 			}		

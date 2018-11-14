@@ -11,11 +11,21 @@ typedef struct
 	char data[10];
 } registro;
 
+/*int verificarRepeticaoCampoTres(registro[] banco_dados, int* valores){
+		for(int j = (i-1); j >= 0; j--){
+			if(valores[i] == valores[j]){
+				valores[i] = rand()%50001;
+				verificarRepeticaoCampoUm(i,valores);
+				break;
+
+		}
+	}
+}*/
+
 int main(int argc, char *argv[]){
 	int n = atoi(argv[1]);
-	printf("%d ", n);
-	getchar();	
-	//int n = 0.8 * 6000;
+	//printf("%d ", n);
+	//getchar();	
 	srand(time(NULL));
 
 	char marca[27][15] = {"VOLKSWAGEM","CHEVROLET","NISSAN","TOYOTA","HONDA","HYUNDAI","KIA","FIAT","FORD","RENAULT","AUDI","BMW","DODGE","MITSUBISHI","SUBARU","JEEP","MAHINDRA","GEELY","TESLA","AGRALE","IVECO","CADILLAC","VOLVO","BUGATTI","MASERATI","GURGEL","MERCEDES"};
@@ -24,6 +34,7 @@ int main(int argc, char *argv[]){
 	char indice[2];
 	char campo_aux[20];
 	char campo_3[n][20];
+	registro banco_dados[n];
 
 	FILE *arq_texto;
 	arq_texto = fopen("campo_3.txt", "w");	
@@ -43,9 +54,11 @@ int main(int argc, char *argv[]){
 		strcat(campo_aux, " ");
 		random_3 = rand() % 27;
 		strcat(campo_aux, marca[random_3]);
-		//campo_3[i][0] = campo_aux;
-		printf("%s", campo_aux);
-		printf("\n");
+		strcpy(banco_dados[i].modelo, campo_aux);
+		//printf("%s", base_dados[i].modelo);
+		//printf("\n");
+		//printf("A: %s", campo_aux);
+		//printf("\n");
 		fprintf(arq_texto, campo_aux);
 		fprintf(arq_texto, "\n");
 	}

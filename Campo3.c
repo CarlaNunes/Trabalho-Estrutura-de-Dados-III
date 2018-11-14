@@ -3,26 +3,23 @@
 #include <string.h>
 #include <time.h>
 
-typedef struct
-{
+typedef struct {
 	int n_vendas;
     char infos[30];
     char modelo[20];
 	char data[10];
 } registro;
 
-/*int verificarRepeticaoCampoTres(registro[] banco_dados, int* valores){
-		for(int j = (i-1); j >= 0; j--){
-			if(valores[i] == valores[j]){
-				valores[i] = rand()%50001;
-				verificarRepeticaoCampoUm(i,valores);
-				break;
-
+int verificaRepeticoes(registro* banco_dados, char* modelo, int i) {
+	for(int j = 0; j < i; j++) {
+		if(banco_dados[j].modelo == modelo) {
+			return 1;
 		}
 	}
-}*/
+	return 0;
+}
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
 	int n = atoi(argv[1]);
 	//printf("%d ", n);
 	//getchar();	
@@ -33,7 +30,6 @@ int main(int argc, char *argv[]){
 	char numero[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 	char indice[2];
 	char campo_aux[20];
-	char campo_3[n][20];
 	registro banco_dados[n];
 
 	FILE *arq_texto;
@@ -43,17 +39,19 @@ int main(int argc, char *argv[]){
 	int random_1;
 	int random_2;
 	int random_3;
-	for(i=0; i<(0.8*n); i++)
-	{
-		random_1 = rand() % 28;
-		indice[0]= letra[random_1];
-		random_2 = rand() % 10;
-		indice[1]= numero[random_2]; 
-		strcpy(campo_aux, indice);
-		//printf("%s \n", campo_aux);
-		strcat(campo_aux, " ");
-		random_3 = rand() % 27;
-		strcat(campo_aux, marca[random_3]);
+	for(i=0; i<(0.8*n); i++) {
+		do{
+			random_1 = rand() % 28;
+			indice[0]= letra[random_1];
+			random_2 = rand() % 10;
+			indice[1]= numero[random_2]; 
+			strcpy(campo_aux, indice);
+			//printf("%s \n", campo_aux);
+			strcat(campo_aux, " ");
+			random_3 = rand() % 27;
+			strcat(campo_aux, marca[random_3]);
+		} while (verificaRepeticoes(banco_dados, campo_aux, i));
+		
 		strcpy(banco_dados[i].modelo, campo_aux);
 		//printf("%s", base_dados[i].modelo);
 		//printf("\n");

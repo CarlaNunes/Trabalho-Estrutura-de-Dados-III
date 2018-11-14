@@ -3,6 +3,14 @@
 #include <time.h>
 #include <string.h>
 
+typedef struct
+{
+	int n_vendas;
+    char infos[30];
+    char modelo[20];
+	char data[10];
+} registro;
+
 
 void verificarRepeticaoCampoDois(int i, int* volume){
 	for(int j = (i-1); j >= 0; j--){
@@ -14,7 +22,7 @@ void verificarRepeticaoCampoDois(int i, int* volume){
 	}
 }
 
-char** gerarCampoDois(int n){
+char** gerarCampoDois(int n, registro* reg){
     char alimentacao[5][9] = {"ELETRICO", "FLEX", "GASOLINA", "ALCOOL", "HIBRIDO"};
     char motor[10][4] = {"1.0", "1.3", "1.5", "1.6", "1.8", "2.0", "2.8", "3.0", "3.8", "4.4"};
     int volume[n];
@@ -42,8 +50,9 @@ char** gerarCampoDois(int n){
                 strcat(campo_2, motor[j]);
                 strcat(campo_2, " ");
                 strcat(campo_2, alimentacao[k]);
-                campo2[m] = campo_2;
-                //printf("%s %d %s\n", campo_2, m, campo2[m]);
+                strcpy(reg[m].infos, campo_2);
+                //campo2[m] = campo_2;
+               // printf("%s %d %s\n", campo_2, m, campo2[m]);
                 m++;
                 if(m >= n*0.75) break;
             }
@@ -56,11 +65,9 @@ char** gerarCampoDois(int n){
     i = (n*0.75);
 	//25% dos valores do Campo1 devem ser repetidos
 	for(int j = 0; j < (0.25*n); j++){ 
-		campo2[i] = campo2[j]; 
-        //printf("%s %d %s\n", campo_2, i,  campo2[j]);
+		strcpy(reg[i].infos, reg[j].infos); 
         i++;
 	}
-    //for(int i = 0; i < 100; i++) printf("%d   %s\n", i, campo2[i]);
     return campo2;
 } 
 
@@ -69,10 +76,12 @@ int main(){
 	//gerarCampoUm();
     int n = 100;
     char** campo2;
+    registro reg[n];
     /*char *campo2[30];
     campo2[0] = "oi, tudo bem?\n";
     printf("%s", campo2[0]);*/
-	campo2 = gerarCampoDois(n);
+	campo2 = gerarCampoDois(n, reg);
+    for(int i = 0; i < 100; i++) printf("%d   %s\n", i, reg[i].infos);
 
     //for(int i = 0; i < n; i++) printf("%d   %s\n", i, campo2[i]);
 	return 0;

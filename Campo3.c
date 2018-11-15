@@ -10,7 +10,7 @@ typedef struct {
 	char data[10];
 } registro;
 
-int verificaRepeticoes(registro* banco_dados, char* modelo, int i) {
+int verificaRepeticoesCampo3(registro* banco_dados, char* modelo, int i) {
 	for(int j = 0; j < i; j++) {
 		if(banco_dados[j].modelo == modelo) {
 			return 1;
@@ -50,22 +50,26 @@ int main(int argc, char *argv[]) {
 			strcat(campo_aux, " ");
 			random_3 = rand() % 27;
 			strcat(campo_aux, marca[random_3]);
-		} while (verificaRepeticoes(banco_dados, campo_aux, i));
+		} while (verificaRepeticoesCampo3(banco_dados, campo_aux, i));
 		
 		strcpy(banco_dados[i].modelo, campo_aux);
 		//printf("%s", base_dados[i].modelo);
 		//printf("\n");
 		//printf("A: %s", campo_aux);
 		//printf("\n");
-		fprintf(arq_texto, campo_aux);
+		fprintf(arq_texto, banco_dados[i].modelo);
 		fprintf(arq_texto, "\n");
 	}
 
-	/*int j;
-	for(j = 0; j < 0.2 * n; j++)
+	int j;
+	for(j=0; j<(0.2*n); j++)
 	{
-
-	}*/
+		strcpy(banco_dados[j+(int)0.8*n].modelo, banco_dados[j].modelo);
+		//printf("%s", banco_dados[j+(0.8*n)].modelo);
+		//printf("\n");
+		fprintf(arq_texto, banco_dados[j+(int)0.8*n].modelo);
+		fprintf(arq_texto, "\n");
+	}
 
 	fclose(arq_texto);
 

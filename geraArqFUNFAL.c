@@ -85,9 +85,8 @@ void gerarCampoDois(int n, registro* reg){
 	//70% dos valores do Campo1 não podem ser repetidos
 	int i, j, k, m = 0;
     while(m < (n*0.75)){
-		for(j= 0; j < 10; j++){
-        	for(k = 0; k < 5; k++){
-            
+        for(k = 0; k < 5; k++){
+            for(j= 0; j < 10; j++){
                 strcpy(campo_2, "" ); 
                 volume[i+1] = 40 + rand()%470;
                 verificarRepeticaoCampoDois(i+1,volume);
@@ -111,7 +110,7 @@ void gerarCampoDois(int n, registro* reg){
 		strcpy(reg[i].infos, reg[j].infos); 
         i++;
 	}
-} 
+}
 
 void gerarCampoTres(int n, registro* banco_dados){
 	char marca[27][15] = {"VOLKSWAGEM","CHEVROLET","NISSAN","TOYOTA","HONDA","HYUNDAI","KIA","FIAT","FORD","RENAULT","AUDI","BMW","DODGE","MITSUBISHI","SUBARU","JEEP","MAHINDRA","GEELY","TESLA","AGRALE","IVECO","CADILLAC","VOLVO","BUGATTI","MASERATI","GURGEL","MERCEDES"};
@@ -152,14 +151,15 @@ void gerarCampoTres(int n, registro* banco_dados){
 	}
 }
 
-
 int gerarCampoQuatro(int n, registro* banco_dados){
 	//Valores String que podem ser usados na data
 	char valoresData[10] = {'0','1','2','3','4','5','6','7','8','9'}; 
 	char valoresDataAux[7] = {'1','0','9','8','7','6','5'};
 
 	//Vetor para salvar uma data
-	char data[10] = {'#','#','/','#','#','/','#','#','#','#'};
+	char data[10];
+	sprintf(data, "##/##/####");
+	//char data[10] = {'#','#','/','#','#','/','#','#','#','#'};
 
 	srand((unsigned)time(NULL)); //Semente da random
 
@@ -263,11 +263,11 @@ int main(int argc, char *argv[]) {
     registro teste;
     FILE *arquivo;
 
+	gerarCampoUm(n, reg);
     gerarCampoDois(n, reg);
-    gerarCampoUm(n, reg);
-	gerarCampoTres(n, reg);
+ 	gerarCampoTres(n, reg);
 	gerarCampoQuatro(n, reg);
-    for(int i = 0; i < n; i++) printf("%d %d %s  %s\n", i, reg[i].n_vendas, reg[i].infos, reg[i].data);
+    for(int i = 0; i < n; i++) printf("%d %d %s %s %s\n", i, reg[i].n_vendas, reg[i].infos, reg[i].modelo, reg[i].data);
 
     //grava no arquivo
 

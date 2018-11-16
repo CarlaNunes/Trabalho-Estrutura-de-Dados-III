@@ -220,7 +220,8 @@ int main(int argc, char *argv[]) {
 
     //grava no arquivo
 
-    arquivo = fopen("notas.dat", "r+b");
+    arquivo = fopen("notas.dat", "w+b");
+
     for(int r = 0; r < n; r++){
         fwrite(&reg[r].n_vendas, sizeof(reg[r].n_vendas), 1, arquivo);
         fwrite(&reg[r].infos, sizeof(reg[r].infos), 1, arquivo);

@@ -21,6 +21,16 @@ int verificarRepeticaoCampoUm(registro* banco_dados, int i){
 	return 0;
 }
 
+void verificarRepeticaoCampoDois(int i, int* volume){
+	for(int j = (i-1); j >= 0; j--){
+		if(volume[i] == volume[j]){
+			volume[i] = 40 + rand()%470;
+			verificarRepeticaoCampoDois(i,volume);
+		    break;
+		}
+	}
+}
+
 int verificaRepeticoesCampoQuatro(registro* banco_dados, char* data, int i) {
 	for(int j = 0; j < i; j++) {
 		if(banco_dados[j].data == data) {
@@ -46,6 +56,47 @@ void gerarCampoUm(int n, registro* banco_dados){
 	for(int j = 0; j < (0.30*n); j++,i++){ 
 		//Salva os valores do campo1(numero de vendas) no banco de dados
 		banco_dados[i].n_vendas = banco_dados[j].n_vendas;
+	}
+} 
+
+void gerarCampoDois(int n, registro* reg){
+    char alimentacao[5][9] = {"ELETRICO", "FLEX", "GASOLINA", "ALCOOL", "HIBRIDO"};
+    char motor[10][4] = {"1.0", "1.3", "1.5", "1.6", "1.8", "2.0", "2.8", "3.0", "3.8", "4.4"};
+    int volume[n];
+	srand((unsigned)time(NULL)); //Semente da random
+    char campo_2[30];
+    //char* campo_2 = (char*)malloc (30 * sizeof(char));
+    char str[4];
+	//O primeiro valor é setado fora do loop pois não é necessario verificarRepeticao
+	volume[0] = 40 + rand()%470;
+	
+	//70% dos valores do Campo1 não podem ser repetidos
+	int i, j, k, m = 0;
+    while(m < (n*0.75)){
+        for(k = 0; k < 5; k++){
+            for(j= 0; j < 10; j++){
+                strcpy(campo_2, "" ); 
+                volume[i+1] = 40 + rand()%470;
+                verificarRepeticaoCampoDois(i+1,volume);
+                sprintf(str, "%d", volume[i+1]);
+                strcat(campo_2, str);
+                strcat(campo_2, " ");
+                strcat(campo_2, motor[j]);
+                strcat(campo_2, " ");
+                strcat(campo_2, alimentacao[k]);
+                strcpy(reg[m].infos, campo_2);
+                m++;
+                if(m >= n*0.75) break;
+            }
+            if(m >= n*0.75) break;
+        }
+    }
+
+    i = (n*0.75);
+	//25% dos valores do Campo1 devem ser repetidos
+	for(int j = 0; j < (0.25*n); j++){ 
+		strcpy(reg[i].infos, reg[j].infos); 
+        i++;
 	}
 } 
 
@@ -101,9 +152,12 @@ int gerarCampoQuatro(int n, registro* banco_dados){
 			//Geracao do dia
 			data[1] = valoresData[rand()%10];		
 
-			/*Se o segundo digito do dia for 0 ou 1, o primeiro digito pode ser 0,1,2 ou 3
+			/*Se o segundo digito do dia for 0, o primeiro digito pode ser 1,2 ou 3,
+			se o segundo digito do dia for 1, o primeiro digito pode ser 0,1,2 ou 3,
 			se o segundo digito do dia for outro valor, o primeiro digito pode ser 0,1 ou 2*/
-			if(data[1] == '0' || data[1] == '1')
+			if(data[1] == '0') 
+				data[0] = 1 + valoresData[rand()%3];
+			else if (data[1] == '1') 
 				data[0] = valoresData[rand()%4];
 			else
 				data[0] = valoresData[rand()%3];
@@ -112,7 +166,7 @@ int gerarCampoQuatro(int n, registro* banco_dados){
 			if(data[3] == '0' && data[4] == '2'){
 				//Nao ha 30 ou mais dias nesse mes 
 				if(data[0] == '3')
-					data[0] = valoresData[rand()%3]; 
+					data[0] = 1 + valoresData[rand()%2]; 
 					
 				//Verificar ano bissexto
 				if(data[0] == '2'){			
@@ -145,59 +199,6 @@ int gerarCampoQuatro(int n, registro* banco_dados){
 		strcpy(banco_dados[i].data, banco_dados[j].data);
 	}
 }
-
-
-void verificarRepeticaoCampoDois(int i, int* volume){
-	for(int j = (i-1); j >= 0; j--){
-		if(volume[i] == volume[j]){
-			volume[i] = 40 + rand()%470;
-			verificarRepeticaoCampoDois(i,volume);
-		    break;
-		}
-	}
-}
-
-void gerarCampoDois(int n, registro* reg){
-    char alimentacao[5][9] = {"ELETRICO", "FLEX", "GASOLINA", "ALCOOL", "HIBRIDO"};
-    char motor[10][4] = {"1.0", "1.3", "1.5", "1.6", "1.8", "2.0", "2.8", "3.0", "3.8", "4.4"};
-    int volume[n];
-	srand((unsigned)time(NULL)); //Semente da random
-    char campo_2[30];
-    //char* campo_2 = (char*)malloc (30 * sizeof(char));
-    char str[4];
-	//O primeiro valor é setado fora do loop pois não é necessario verificarRepeticao
-	volume[0] = 40 + rand()%470;
-	
-	//70% dos valores do Campo1 não podem ser repetidos
-	int i, j, k, m = 0;
-    while(m < (n*0.75)){
-        for(k = 0; k < 5; k++){
-            for(j= 0; j < 10; j++){
-                strcpy(campo_2, "" ); 
-                volume[i+1] = 40 + rand()%470;
-                verificarRepeticaoCampoDois(i+1,volume);
-                sprintf(str, "%d", volume[i+1]);
-                strcat(campo_2, str);
-                strcat(campo_2, " ");
-                strcat(campo_2, motor[j]);
-                strcat(campo_2, " ");
-                strcat(campo_2, alimentacao[k]);
-                strcpy(reg[m].infos, campo_2);
-                m++;
-                if(m >= n*0.75) break;
-            }
-            if(m >= n*0.75) break;
-        }
-    }
-
-    i = (n*0.75);
-	//25% dos valores do Campo1 devem ser repetidos
-	for(int j = 0; j < (0.25*n); j++){ 
-		strcpy(reg[i].infos, reg[j].infos); 
-        i++;
-	}
-} 
-
 
 int main(int argc, char *argv[]) {
 	int n = atoi(argv[1]);

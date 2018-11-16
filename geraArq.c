@@ -44,8 +44,11 @@ void gerarCampoUm(int n, registro* banco_dados){
 	srand((unsigned)time(NULL)); //Semente da random
 	
 	//70% dos valores do Campo1 não podem ser repetidos
-	int i = 0;
-	for(i; i < (0.70*n); i++){ 
+	int aux1, aux2, i = 0;
+	aux2 = 0,30*n;
+	aux1 = n - aux2;
+	
+	for(i; i < aux1; i++){ 
 		do{
 			//Salva os valores do campo1(numero de vendas) no banco de dados
 			banco_dados[i].n_vendas = rand()%50001;	
@@ -53,7 +56,7 @@ void gerarCampoUm(int n, registro* banco_dados){
 	}
 
 	//30% dos valores do Campo1 devem ser repetidos
-	for(int j = 0; j < (0.30*n); j++,i++){ 
+	for(int j = 0; j < aux2; j++,i++){ 
 		//Salva os valores do campo1(numero de vendas) no banco de dados
 		banco_dados[i].n_vendas = banco_dados[j].n_vendas;
 	}
@@ -111,8 +114,11 @@ int gerarCampoQuatro(int n, registro* banco_dados){
 	srand((unsigned)time(NULL)); //Semente da random
 
 	//85% dos valores do campo4 não podem ser repetidos
-	int i = 0;
-	for(i; i < (0.85*n); i++){
+	int aux1, aux2, i = 0;
+	aux2 = 0,15*n;
+	aux1 = n - aux2;
+	
+	for(i; i < aux1; i++){
 		do{ 
 
 			//Geracao do ano
@@ -171,12 +177,12 @@ int gerarCampoQuatro(int n, registro* banco_dados){
 				//Verificar ano bissexto
 				if(data[0] == '2'){			
 					//Transformar o ano da String em double
-					char aux1 = data[6], aux2 = data[7], aux3 = data[8], aux4 = data[9]; 
+					char aux3 = data[6], aux4 = data[7], aux5 = data[8], aux6 = data[9]; 
 					char* verificaBissexto = malloc (4 * sizeof(char));
-					verificaBissexto[0] = aux1;
-					verificaBissexto[1] = aux2;
-					verificaBissexto[2] = aux3;
-					verificaBissexto[3] = aux4;
+					verificaBissexto[0] = aux3;
+					verificaBissexto[1] = aux4;
+					verificaBissexto[2] = aux5;
+					verificaBissexto[3] = aux6;
 					int auxBissexto = atoi(verificaBissexto);
 
 					//Se não for ano bissexto, então não pode haver dia 29
@@ -195,7 +201,7 @@ int gerarCampoQuatro(int n, registro* banco_dados){
 	}
 
 	//25% dos valores do campo4 devem ser repetidos
-	for(int j = 0; j < (0.15*n); j++,i++){
+	for(int j = 0; j < aux2; j++,i++){
 		strcpy(banco_dados[i].data, banco_dados[j].data);
 	}
 }
@@ -229,7 +235,7 @@ int main(int argc, char *argv[]) {
         fread(&teste.n_vendas, sizeof(reg[r].n_vendas), 1, arquivo);
         fread(&teste.infos, sizeof(reg[r].infos), 1, arquivo);
         fread(&teste.data, sizeof(reg[r].data), 1, arquivo);
-        printf("%d %s %s\n", teste.n_vendas, teste.infos, teste.data);
+        //printf("%d %s %s\n", teste.n_vendas, teste.infos, teste.data);
     }
     
     fclose(arquivo);

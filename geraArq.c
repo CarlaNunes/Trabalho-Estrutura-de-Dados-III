@@ -75,7 +75,12 @@ void gerarCampoDois(int n, registro* reg){
 	
 	//70% dos valores do Campo1 não podem ser repetidos
 	int i, j, k, m = 0;
-    while(m < (n*0.75)){
+	int aux1,aux2;
+	aux2 = n*0.25;
+	aux1 = n - aux2;
+
+	i = 0;
+    while(m < aux1){
         for(k = 0; k < 5; k++){
             for(j= 0; j < 10; j++){
                 strcpy(campo_2, "" ); 
@@ -89,15 +94,16 @@ void gerarCampoDois(int n, registro* reg){
                 strcat(campo_2, alimentacao[k]);
                 strcpy(reg[m].infos, campo_2);
                 m++;
-                if(m >= n*0.75) break;
+                if(m >= aux1) break;
             }
-            if(m >= n*0.75) break;
+            if(m >= aux1) break;
         }
+        i++;
     }
 
-    i = (n*0.75);
+    i = aux1;
 	//25% dos valores do Campo1 devem ser repetidos
-	for(int j = 0; j < (0.25*n); j++){ 
+	for(int j = 0; j < aux2; j++){ 
 		strcpy(reg[i].infos, reg[j].infos); 
         i++;
 	}

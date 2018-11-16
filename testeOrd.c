@@ -5,10 +5,10 @@
 
 typedef struct
 {
-	int n_vendas;
+    int n_vendas;
     char infos[30];
     char modelo[20];
-	char data[10];
+    char data[10];
 } registro;
 
 void heapify(registro arr[], int n, int i) 
@@ -78,7 +78,7 @@ void heapSort(registro arr[], int n)
     } 
 } 
 int main(int argc, char *argv[]) {
-	int n = atoi(argv[1]);
+    int n = atoi(argv[1]);
     /*int vetor[5]= {5,4,8,7,7};
     heapSort(vetor, 5);
     for(int i = 0; i < 5; i++) printf("%d\n", vetor[i]);*/

@@ -45,7 +45,7 @@ void gerarCampoUm(int n, registro* banco_dados){
 	
 	//70% dos valores do Campo1 não podem ser repetidos
 	int aux1, aux2, i = 0;
-	aux2 = 0,30*n;
+	aux2 = 0.30*n;
 	aux1 = n - aux2;
 	
 	for(i; i < aux1; i++){ 
@@ -115,7 +115,7 @@ int gerarCampoQuatro(int n, registro* banco_dados){
 
 	//85% dos valores do campo4 não podem ser repetidos
 	int aux1, aux2, i = 0;
-	aux2 = 0,15*n;
+	aux2 = 0.15*n;
 	aux1 = n - aux2;
 	
 	for(i; i < aux1; i++){

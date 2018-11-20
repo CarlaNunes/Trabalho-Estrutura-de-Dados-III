@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
             gerarCampoTres(n, reg);
             gerarCampoQuatro(n, reg);
 
-            //for(int i = 0; i < n; i++) printf("%d %d %s  %s\n", i, reg[i].n_vendas, reg[i].infos, reg[i].data);
+            //for(int i = 0; i < n; i++) printf("%d %d %s %s %s\n", i, reg[i].n_vendas, reg[i].infos, reg[i].modelo, reg[i].data);
 
             FILE *arquivo;
             arquivo = fopen(nome_arq1, "w+b");
@@ -139,9 +139,9 @@ int main(int argc, char *argv[]) {
 			fread(&reg1_aux.infos, sizeof(reg1_aux.infos), 1, arq_entrada1);
 			fread(&reg1_aux.modelo, sizeof(reg1_aux.modelo), 1, arq_entrada1);
 			fread(&reg1_aux.data, sizeof(reg1_aux.data), 1, arq_entrada1);
-			printf("%d %s %s %s\n", reg1_aux.n_vendas, reg1_aux.infos, reg1_aux.modelo, reg1_aux.data);
+			//printf("%d %s %s %s\n", reg1_aux.n_vendas, reg1_aux.infos, reg1_aux.modelo, reg1_aux.data);
 			if(feof(arq_entrada1)) 
-				printf("Arquivo acabou \n");
+				flag = 1;
 
 			registro reg2_aux;
 			fseek(arq_entrada2, 0, SEEK_SET);
@@ -150,6 +150,48 @@ int main(int argc, char *argv[]) {
 			fread(&reg2_aux.modelo, sizeof(reg2_aux.modelo), 1, arq_entrada2);
 			fread(&reg2_aux.data, sizeof(reg2_aux.data), 1, arq_entrada2);
 			//printf("%d %s %s %s\n", reg2_aux.n_vendas, reg2_aux.infos, reg2_aux.modelo, reg2_aux.data);
+			if(feof(arq_entrada2)) 
+				flag = 1;
+
+			while(flag == 0){
+				if(reg1_aux.n_vendas < reg2_aux.n_vendas){
+					fread(&reg1_aux.n_vendas, sizeof(reg1_aux.n_vendas), 1, arq_entrada1);
+					fread(&reg1_aux.infos, sizeof(reg1_aux.infos), 1, arq_entrada1);
+					fread(&reg1_aux.modelo, sizeof(reg1_aux.modelo), 1, arq_entrada1);
+					fread(&reg1_aux.data, sizeof(reg1_aux.data), 1, arq_entrada1);
+
+					if(feof(arq_entrada1)) 
+						flag = 1;
+				}
+				else if(reg1_aux.n_vendas > reg2_aux.n_vendas){
+					fread(&reg2_aux.n_vendas, sizeof(reg2_aux.n_vendas), 1, arq_entrada2);
+					fread(&reg2_aux.infos, sizeof(reg2_aux.infos), 1, arq_entrada2);
+					fread(&reg2_aux.modelo, sizeof(reg2_aux.modelo), 1, arq_entrada2);
+					fread(&reg2_aux.data, sizeof(reg2_aux.data), 1, arq_entrada2);
+
+					if(feof(arq_entrada2)) 
+						flag = 1;
+				}
+				else{ 
+					fwrite(&reg1_aux.n_vendas, sizeof(reg1_aux.n_vendas), 1, arq_saida);
+                	fwrite(&reg1_aux.infos, sizeof(reg1_aux.infos), 1, arq_saida);
+                	fwrite(&reg1_aux.modelo, sizeof(reg1_aux.modelo), 1, arq_saida);
+                	fwrite(&reg1_aux.data, sizeof(reg1_aux.data), 1, arq_saida);
+
+					fread(&reg1_aux.n_vendas, sizeof(reg1_aux.n_vendas), 1, arq_entrada1);
+					fread(&reg1_aux.infos, sizeof(reg1_aux.infos), 1, arq_entrada1);
+					fread(&reg1_aux.modelo, sizeof(reg1_aux.modelo), 1, arq_entrada1);
+					fread(&reg1_aux.data, sizeof(reg1_aux.data), 1, arq_entrada1);
+
+					fread(&reg2_aux.n_vendas, sizeof(reg2_aux.n_vendas), 1, arq_entrada2);
+					fread(&reg2_aux.infos, sizeof(reg2_aux.infos), 1, arq_entrada2);
+					fread(&reg2_aux.modelo, sizeof(reg2_aux.modelo), 1, arq_entrada2);
+					fread(&reg2_aux.data, sizeof(reg2_aux.data), 1, arq_entrada2);
+
+					if(feof(arq_entrada1) || feof(arq_entrada2)) 
+						flag = 1;
+				}
+			}
 
 			fclose(arq_entrada1);
 			fclose(arq_entrada2);
@@ -284,7 +326,9 @@ void gerarCampoTres(int n, registro* banco_dados){
 	int random_1;
 	int random_2;
 	int random_3;
-	for(i=0; i<(int)(0.8*n); i++) {
+	int aux_rep = (int) (0.8*n);
+
+	for(i=0; i<aux_rep; i++) {
 		do{
 			strcpy(campo_aux, "");
 
@@ -304,10 +348,10 @@ void gerarCampoTres(int n, registro* banco_dados){
 		//printf("%s\n", banco_dados[i].modelo);
 	}
 
-	for(i=0.8*n, j=0; j<(int)(0.2*n); i++, j++)
+	for(i=aux_rep, j=0; j<n-aux_rep; i++, j++)
 	{
-		strcpy(banco_dados[i].modelo, banco_dados[j].modelo);
-		//printf("%s", banco_dados[j+(int)0.8*n].modelo);
+		strcpy(banco_dados[i].modelo, banco_dados[rand()%aux_rep].modelo);
+		//printf("%s", banco_dados[i].modelo);
 		//printf("\n");
 	}
 }

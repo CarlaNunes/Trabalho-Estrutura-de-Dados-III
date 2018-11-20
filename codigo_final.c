@@ -34,27 +34,30 @@ int main(int argc, char *argv[]) {
     char* arg3 = argv[3];
     char* arg4 = argv[4];
 
-    char* nome_arq;
+    char* nome_arq1;
+	char* nome_arq2;
+	char* nome_arq3;
     int n;
     int flag_erro = 0;
-    registro reg[6000];
+    registro* reg;
 
     switch(arg1)
     {
         // Gerar arquivo de dados
         case 1:        
-            nome_arq = arg2; 
+            nome_arq1 = arg2; 
             n = atoi(arg3);
+			reg = (registro*) malloc (n * sizeof(registro));
 
-            gerarCampoDois(n, reg);
             gerarCampoUm(n, reg);
+			//gerarCampoDois(n, reg);
             gerarCampoTres(n, reg);
             gerarCampoQuatro(n, reg);
 
             //for(int i = 0; i < n; i++) printf("%d %d %s  %s\n", i, reg[i].n_vendas, reg[i].infos, reg[i].data);
 
             FILE *arquivo;
-            arquivo = fopen(nome_arq, "w+b");
+            arquivo = fopen(nome_arq1, "w+b");
 
             for(int r = 0; r < n; r++){
                 fwrite(&reg[r].n_vendas, sizeof(reg[r].n_vendas), 1, arquivo);
@@ -69,28 +72,27 @@ int main(int argc, char *argv[]) {
                 printf("Arquivo gerado.\n");
             else
                 printf("Falha no processamento.\n");
-
         break;
 
-        // Printar o arquivo
+        // Ler e printar o arquivo
         case 2:
-            nome_arq = arg2; 
+            nome_arq1 = arg2; 
 
             FILE *arquivo_leitura;
-            arquivo_leitura = fopen(nome_arq, "w+b");
+            arquivo_leitura = fopen(nome_arq1, "r+b");
 
             if(arquivo_leitura != NULL)
             {
                 registro teste;
                 fseek(arquivo_leitura, 0, SEEK_SET);
-                for(int r = 0; r < n; r++){
-                    fread(&teste.n_vendas, sizeof(reg[r].n_vendas), 1, arquivo_leitura);
-                    fread(&teste.infos, sizeof(reg[r].infos), 1, arquivo_leitura);
-                    fread(&teste.modelo, sizeof(reg[r].modelo), 1, arquivo_leitura);
-                    fread(&teste.data, sizeof(reg[r].data), 1, arquivo_leitura);
+				////////////////////////********
+                while(!feof(arquivo_leitura)){
+                    fread(&teste.n_vendas, sizeof(teste.n_vendas), 1, arquivo_leitura);
+                    fread(&teste.infos, sizeof(teste.infos), 1, arquivo_leitura);
+                    fread(&teste.modelo, sizeof(teste.modelo), 1, arquivo_leitura);
+                    fread(&teste.data, sizeof(teste.data), 1, arquivo_leitura);
                     printf("%d %s %s %s\n", teste.n_vendas, teste.infos, teste.modelo, teste.data);
                 }
-
                 fclose(arquivo_leitura);
 
                 if(flag_erro == 1)
@@ -100,8 +102,67 @@ int main(int argc, char *argv[]) {
                 printf("Arquivo vazio.\n");
         break;
 
-        // Gerar arquivo de dados
+        // Ordenação interna
         case 3:
+
+        break;
+
+		// Merging
+        case 4:
+
+        break;
+
+		// Matching
+        case 5:
+			nome_arq1 = arg2;
+			nome_arq2 = arg3;
+			nome_arq3 = arg4;
+
+			FILE *arq_entrada1;
+            arq_entrada1 = fopen(nome_arq1, "r+b");
+
+			FILE *arq_entrada2;
+           	arq_entrada2 = fopen(nome_arq2, "r+b");
+
+			FILE *arq_saida;
+            arq_saida = fopen(nome_arq3, "w+b");
+
+			int flag = 0;
+			/*
+				0: existem mais nomes
+				1: nao existem mais nomes
+			*/
+
+			registro reg1_aux;
+			fseek(arq_entrada1, 0, SEEK_SET);
+			fread(&reg1_aux.n_vendas, sizeof(reg1_aux.n_vendas), 1, arq_entrada1);
+			fread(&reg1_aux.infos, sizeof(reg1_aux.infos), 1, arq_entrada1);
+			fread(&reg1_aux.modelo, sizeof(reg1_aux.modelo), 1, arq_entrada1);
+			fread(&reg1_aux.data, sizeof(reg1_aux.data), 1, arq_entrada1);
+			printf("%d %s %s %s\n", reg1_aux.n_vendas, reg1_aux.infos, reg1_aux.modelo, reg1_aux.data);
+			if(feof(arq_entrada1)) 
+				printf("Arquivo acabou \n");
+
+			registro reg2_aux;
+			fseek(arq_entrada2, 0, SEEK_SET);
+			fread(&reg2_aux.n_vendas, sizeof(reg2_aux.n_vendas), 1, arq_entrada2);
+			fread(&reg2_aux.infos, sizeof(reg2_aux.infos), 1, arq_entrada2);
+			fread(&reg2_aux.modelo, sizeof(reg2_aux.modelo), 1, arq_entrada2);
+			fread(&reg2_aux.data, sizeof(reg2_aux.data), 1, arq_entrada2);
+			//printf("%d %s %s %s\n", reg2_aux.n_vendas, reg2_aux.infos, reg2_aux.modelo, reg2_aux.data);
+
+			fclose(arq_entrada1);
+			fclose(arq_entrada2);
+			fclose(arq_saida);
+        break;
+
+		// Multiway merging
+		case 6:
+
+        break;
+
+		// Ordenação externa
+		case 7:
 
         break;
 
@@ -212,6 +273,7 @@ void gerarCampoDois(int n, registro* reg){
 } 
 
 void gerarCampoTres(int n, registro* banco_dados){
+	srand(time(NULL));
 	char marca[27][15] = {"VOLKSWAGEM","CHEVROLET","NISSAN","TOYOTA","HONDA","HYUNDAI","KIA","FIAT","FORD","RENAULT","AUDI","BMW","DODGE","MITSUBISHI","SUBARU","JEEP","MAHINDRA","GEELY","TESLA","AGRALE","IVECO","CADILLAC","VOLVO","BUGATTI","MASERATI","GURGEL","MERCEDES"};
 	char letra[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'X', 'Y', 'Z'};
 	char numero[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
@@ -222,7 +284,7 @@ void gerarCampoTres(int n, registro* banco_dados){
 	int random_1;
 	int random_2;
 	int random_3;
-	for(i=0; i<(0.8*n); i++) {
+	for(i=0; i<(int)(0.8*n); i++) {
 		do{
 			strcpy(campo_aux, "");
 
@@ -242,7 +304,7 @@ void gerarCampoTres(int n, registro* banco_dados){
 		//printf("%s\n", banco_dados[i].modelo);
 	}
 
-	for(i=0.8*n, j=0; j<(0.2*n); i++, j++)
+	for(i=0.8*n, j=0; j<(int)(0.2*n); i++, j++)
 	{
 		strcpy(banco_dados[i].modelo, banco_dados[j].modelo);
 		//printf("%s", banco_dados[j+(int)0.8*n].modelo);

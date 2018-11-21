@@ -27,6 +27,10 @@ void gerarCampoTres(int, registro*);
 
 void gerarCampoQuatro(int, registro*);
 
+void heapify(registro[], int, int);
+
+ void heapSort(registro[], int);
+
 int main(int argc, char *argv[]) {
     // Possiveis parametros recebidos na execucao do codigo
     int arg1 = atoi(argv[1]);
@@ -50,9 +54,9 @@ int main(int argc, char *argv[]) {
 			reg = (registro*) malloc (n * sizeof(registro));
 
             gerarCampoUm(n, reg);
-			//gerarCampoDois(n, reg);
+			gerarCampoDois(n, reg);
             gerarCampoTres(n, reg);
-            gerarCampoQuatro(n, reg);
+            //gerarCampoQuatro(n, reg);
 
             //for(int i = 0; i < n; i++) printf("%d %d %s %s %s\n", i, reg[i].n_vendas, reg[i].infos, reg[i].modelo, reg[i].data);
 
@@ -104,6 +108,57 @@ int main(int argc, char *argv[]) {
 
         // Ordenação interna
         case 3:
+			nome_arq1 = arg2; 
+
+            FILE *arquivo_ordenar;
+            arquivo_ordenar = fopen(nome_arq1, "r+b");
+
+			int count = -1;
+            if(arquivo_ordenar != NULL)
+            {
+                registro teste;
+                //fseek(arquivo_ordenar, 0, SEEK_SET);
+				////////////////////////********
+                while(!feof(arquivo_ordenar)){
+                    fread(&teste.n_vendas, sizeof(teste.n_vendas), 1, arquivo_ordenar);
+                    fread(&teste.infos, sizeof(teste.infos), 1, arquivo_ordenar);
+                    fread(&teste.modelo, sizeof(teste.modelo), 1, arquivo_ordenar);
+                    fread(&teste.data, sizeof(teste.data), 1, arquivo_ordenar);
+                    //printf("%d %s %s %s\n", teste.n_vendas, teste.infos, teste.modelo, teste.data);
+					count++;
+                }
+                //fclose(arquivo_ordenar);
+
+				n = count;
+				reg = (registro*) malloc (n*sizeof(registro));
+				fseek(arquivo_ordenar, 0, SEEK_SET);
+				for(int r = 0; r < n; r++){
+					fread(&reg[r].n_vendas, sizeof(reg[r].n_vendas), 1, arquivo_ordenar);
+					fread(&reg[r].infos, sizeof(reg[r].infos), 1, arquivo_ordenar);
+					fread(&reg[r].modelo, sizeof(reg[r].modelo), 1, arquivo_ordenar);
+					fread(&reg[r].data, sizeof(reg[r].data), 1, arquivo_ordenar);
+					// printf("%d %s %s\n", regs[r].n_vendas, regs[r].infos, regs[r].data);
+				}
+				heapSort(reg, n);
+				//for(int r = 0; r < n; r++) printf("%d %s %s %s\n", reg[r].n_vendas, reg[r].modelo, reg[r].infos, reg[r].data);
+
+				fseek(arquivo_ordenar, 0, SEEK_SET);
+				for(int r = 0; r < n; r++){
+					fwrite(&reg[r].n_vendas, sizeof(reg[r].n_vendas), 1, arquivo_ordenar);
+					fwrite(&reg[r].infos, sizeof(reg[r].infos), 1, arquivo_ordenar);
+					fwrite(&reg[r].modelo, sizeof(reg[r].modelo), 1, arquivo_ordenar);
+					fwrite(&reg[r].data, sizeof(reg[r].data), 1, arquivo_ordenar);
+				}
+
+				fclose(arquivo_ordenar); 
+
+				//printf("Linhas: %d \n", count);
+
+                if(flag_erro == 1)
+                    printf("Falha no processamento.\n");
+            }
+            else
+                printf("Arquivo vazio.\n");
 
         break;
 
@@ -277,8 +332,8 @@ void gerarCampoDois(int n, registro* reg){
     char motor[10][4] = {"1.0", "1.3", "1.5", "1.6", "1.8", "2.0", "2.8", "3.0", "3.8", "4.4"};
     int volume[n];
 	srand((unsigned)time(NULL)); //Semente da random
-    char campo_2[30];
-    //char* campo_2 = (char*)malloc (30 * sizeof(char));
+    //char campo_2[30];
+    char* campo_2 = (char*)malloc (30 * sizeof(char));
     char str[4];
 	//O primeiro valor é setado fora do loop pois não é necessario verificarRepeticao
 	volume[0] = 40 + rand()%470;
@@ -375,7 +430,6 @@ void gerarCampoQuatro(int n, registro* banco_dados){
 	
 	for(i; i < aux1; i++){
 		do{ 
-
 			//Geracao do ano
 			data[9] = valoresData[rand()%10];
 			data[8] = valoresDataAux[rand()%7];
@@ -451,6 +505,7 @@ void gerarCampoQuatro(int n, registro* banco_dados){
 				if (data[0] == '3' && data[1] == '1')
 					data[1] = '0';
 			}
+			//printf("%s \n", data);
 			strcpy(banco_dados[i].data, data);
 		}while(verificaRepeticoesCampoQuatro(banco_dados, data, i));
 	}
@@ -460,3 +515,80 @@ void gerarCampoQuatro(int n, registro* banco_dados){
 		strcpy(banco_dados[i].data, banco_dados[j].data);
 	}
 }
+
+void heapify(registro arr[], int n, int i) 
+{ 
+	int largest = i; // Initialize largest as root 
+	int l = 2*i + 1; // left = 2*i + 1 
+	int r = 2*i + 2; // right = 2*i + 2 
+	registro aux;
+
+	if (l < n && arr[l].n_vendas > arr[largest].n_vendas){
+		largest = l;
+	}
+
+	if (r < n && arr[r].n_vendas > arr[largest].n_vendas) 
+		largest = r;  
+
+		
+	if (l < n && arr[l].n_vendas == arr[largest].n_vendas){
+			if(strcmp(arr[l].infos, arr[largest].infos) > 0){
+			largest = l; 
+		}else{
+			if(strcmp(arr[l].infos, arr[largest].infos) == 0){
+				if(strcmp(arr[l].modelo, arr[largest].modelo) > 0){
+					largest = l;
+				}else{
+					if(strcmp(arr[l].modelo, arr[largest].modelo) == 0){
+						if(strcmp(arr[l].data, arr[largest].data) > 0){
+							largest = l;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if (r < n && arr[r].n_vendas == arr[largest].n_vendas){
+			if(strcmp(arr[r].infos, arr[largest].infos) > 0){
+			largest = r; 
+		}else{
+			if(strcmp(arr[r].infos, arr[largest].infos) == 0){
+				if(strcmp(arr[r].modelo, arr[largest].modelo) > 0){
+					largest = r;
+				}else{
+					if(strcmp(arr[r].modelo, arr[largest].modelo) == 0){
+						if(strcmp(arr[r].data, arr[largest].data) > 0){
+							largest = r;
+						}
+					}
+				}
+			}
+		}
+	}
+		// If largest is not root 
+		if (largest != i) 
+		{ 
+			aux = arr[i];
+			arr[i] = arr[largest];
+			arr[largest] = aux;
+			heapify(arr, n, largest); 
+		} 
+ } 
+
+ // main function to do heap sort 
+ void heapSort(registro arr[], int n) 
+ { 
+     // Build heap (rearrange array) 
+     registro aux;
+     for (int i = n / 2 - 1; i >= 0; i--) 
+         heapify(arr, n, i); 
+   
+     // One by one extract an element from heap 
+     for (int i=n-1; i>=0; i--){ 
+         aux = arr[i];
+         arr[i] = arr[0];
+         arr[0] = aux;
+         heapify(arr, i, 0); 
+    } 
+} 

@@ -82,14 +82,7 @@ int main(int argc, char *argv[]) {
 	  }
 
   		else{
-            char c;
-            do {
-              c = fgetc(arquivo2);
-              if( feof(arquivo2) ) {
-                 break ;
-              }
-              printf("%c", c);
-           } while(1);
+         
   			//merging(arquivo1,arquivo2,arquivo_saida);
   		}
 

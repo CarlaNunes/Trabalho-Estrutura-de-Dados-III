@@ -85,21 +85,45 @@ int main(int argc, char *argv[])
 
 		FILE *arquivo_leitura;
 		arquivo_leitura = fopen(nome_arq1, "r+b");
-
+		int count1 = -1;
+		registro teste;
 		if (arquivo_leitura != NULL)
 		{
-			registro aux;
+			registro* aux;
 			fseek(arquivo_leitura, 0, SEEK_SET);
 			////////////////////////********
-			while (!feof(arquivo_leitura))
+			/*while (!feof(arquivo_leitura))
 			{
 				//leRegistro(&aux, arquivo_leitura);
 				fread(&aux.n_vendas, sizeof(aux.n_vendas), 1, arquivo_leitura);
 				fread(&aux.infos, sizeof(aux.infos), 1, arquivo_leitura);
 				fread(&aux.modelo, sizeof(aux.modelo), 1, arquivo_leitura);
 				fread(&aux.data, sizeof(aux.data), 1, arquivo_leitura);
-				printf("%d %s %s %s\n", aux.n_vendas, aux.infos, aux.modelo, aux.data);
+				//printf("%d %s %s %s\n", aux.n_vendas, aux.infos, aux.modelo, aux.data);
+			}*/
+
+			while (!feof(arquivo_leitura)){
+				fread(&teste.n_vendas, sizeof(teste.n_vendas), 1, arquivo_leitura);
+				fread(&teste.infos, sizeof(teste.infos), 1, arquivo_leitura);
+				fread(&teste.modelo, sizeof(teste.modelo), 1, arquivo_leitura);
+				fread(&teste.data, sizeof(teste.data), 1, arquivo_leitura);
+				//printf("%d %s %s %s\n", teste.n_vendas, teste.infos, teste.modelo, teste.data);
+				count1++;
 			}
+			//fclose(arquivo_ordenar);
+
+			n = count1;
+			reg = (registro *)malloc(n * sizeof(registro));
+			fseek(arquivo_leitura, 0, SEEK_SET);
+			for (int r = 0; r < n; r++)
+			{
+				fread(&reg[r].n_vendas, sizeof(reg[r].n_vendas), 1, arquivo_leitura);
+				fread(&reg[r].infos, sizeof(reg[r].infos), 1, arquivo_leitura);
+				fread(&reg[r].modelo, sizeof(reg[r].modelo), 1, arquivo_leitura);
+				fread(&reg[r].data, sizeof(reg[r].data), 1, arquivo_leitura);
+				printf("%d %s %s\n", reg[r].n_vendas, reg[r].infos, reg[r].data);
+			}
+
 			fclose(arquivo_leitura);
 
 			if (flag_erro == 1)
@@ -271,12 +295,9 @@ int main(int argc, char *argv[])
 	// Ordenação externa
 	case 7:
 		nome_arq1 = arg2;
-		printf("oi\n");
 		//nome_arq2 = arg3;
 
-		arquivo_ordenar = fopen(nome_arq1, "r+b");
-
-		FILE *sub[6];
+		arquivo_ordenar = fopen(nome_arq1, "r+b");		
 		count = -1;
 		if (arquivo_ordenar != NULL){
 			registro teste;
@@ -291,30 +312,35 @@ int main(int argc, char *argv[])
 			}
 
 			n = count;
-			char subArq[n][5];
 			printf("Número de registros = %d\n", n);
-			int pag =10, aux = 0, r = 0;
+			int pag = 10, aux = 0, r = 0;
+			int numS;
+			if(n % pag == 0) numS = n/pag;
+			else numS = n/pag + 1;
+			printf("Número de páginas: %d\n", numS);
 
-			
+			FILE *sub[numS];
+			char subArq[numS][5];
 			reg = (registro *)malloc(n * sizeof(registro));
 			fseek(arquivo_ordenar, 0, SEEK_SET);
 			//for (int r = 0; r < n /pag; r++){
 			while(!feof(arquivo_ordenar)){
 				for (int s = 0; s < pag; s++){
+					if(feof(arquivo_ordenar)) break;
 					fread(&reg[s].n_vendas, sizeof(reg[s].n_vendas), 1, arquivo_ordenar);
 					fread(&reg[s].infos, sizeof(reg[s].infos), 1, arquivo_ordenar);
 					fread(&reg[s].modelo, sizeof(reg[s].modelo), 1, arquivo_ordenar);
 					fread(&reg[s].data, sizeof(reg[s].data), 1, arquivo_ordenar);
 					aux++;
-					if(feof(arquivo_ordenar)) break;
 
 					//printf("%d %s %s %s\n", reg[s].n_vendas, reg[s].infos, reg[s].modelo, reg[s].data);
 				}
 				heapSort(reg, pag);
-				//for(int r = 0; r < 100; r++) printf("%d %s %s %s\n", reg[r].n_vendas,  reg[r].infos, reg[r].modelo,reg[r].data);
-				sprintf(subArq[r], "sub_%d.dat", r);
+				for(int r = 0; r < aux; r++) printf("%d %s %s %s\n", reg[r].n_vendas,  reg[r].infos, reg[r].modelo,reg[r].data);
+				sprintf(subArq[r], "sub_%d.dat", r+1);
 				sub[r] = fopen(subArq[r], "w+b");
 				//fwrite("o", sizeof(char), 1, sub[r]);
+				printf("\n\nTamanho do Subarquivo: %d \n\n", aux);
 
 				for (int p = 0; p < aux; p++){
 					fwrite(&reg[p].n_vendas, sizeof(reg[p].n_vendas), 1, sub[r]);
@@ -323,10 +349,33 @@ int main(int argc, char *argv[])
 					fwrite(&reg[p].data, sizeof(reg[p].data), 1, sub[r]);
 					//printf("%d %s %s %s\n", reg[p].n_vendas, reg[p].infos, reg[p].modelo, reg[p].data);
 				}
-				aux =0;
-				fclose(sub[r]);
+				aux = 0;
+				r++;
+				//fclose(sub[r]);
 			}
 			fclose(arquivo_ordenar);
+			/*int iter, aux = 0;
+			if(numS/2 == 0) iter = numS/2;
+			else iter = numS/2+1;
+			while(iter != 0){
+				while(pag*(aux+2)){
+				for (int s = 0; s < pag/2; s++){
+					if(feof(arquivo_ordenar)) break;
+					leRegistro(&reg, sub[aux]);
+					leRegistro(&reg, sub[aux]);
+					aux++;
+					//printf("%d %s %s %s\n", reg[s].n_vendas, reg[s].infos, reg[s].modelo, reg[s].data);
+				}
+				sprintf(subArq[r], "sub_%d.dat", r+1);
+				/*imprimeRegistro(reg2_aux);
+
+
+				if(iter/2 == 0) iter = iter/2;
+				else iter = iter/2+1;
+				}
+
+			}*/
+
 			
 
 			//printf("Linhas: %d \n", count);
@@ -731,10 +780,3 @@ void escreveRegistro(registro reg, FILE *arquivo)
 	fwrite(&reg.data, sizeof(reg.data), 1, arquivo);
 }
 
-/*void leRegistro(registro* reg, FILE* arquivo){
-	fread(reg->n_vendas, sizeof(reg->n_vendas), 1, arquivo);
-	fread(reg->infos, sizeof(reg->infos), 1, arquivo);
-	fread(reg->modelo, sizeof(reg->modelo), 1, arquivo);
-	fread(reg->data, sizeof(reg->data), 1, arquivo);
-	//printf("%d %s %s %s\n", reg->n_vendas, reg->infos, reg->modelo, reg->data);
-}*/

@@ -29,7 +29,11 @@ void gerarCampoQuatro(int, registro*);
 
 void heapify(registro[], int, int);
 
- void heapSort(registro[], int);
+void heapSort(registro[], int);
+
+void escreveRegistro(registro, FILE*);
+
+void leRegistro(registro*, FILE*);
 
 int main(int argc, char *argv[]) {
     // Possiveis parametros recebidos na execucao do codigo
@@ -63,12 +67,8 @@ int main(int argc, char *argv[]) {
             FILE *arquivo;
             arquivo = fopen(nome_arq1, "w+b");
 
-            for(int r = 0; r < n; r++){
-                fwrite(&reg[r].n_vendas, sizeof(reg[r].n_vendas), 1, arquivo);
-                fwrite(&reg[r].infos, sizeof(reg[r].infos), 1, arquivo);
-                fwrite(&reg[r].modelo, sizeof(reg[r].modelo), 1, arquivo);
-                fwrite(&reg[r].data, sizeof(reg[r].data), 1, arquivo);
-            }
+            for(int r = 0; r < n; r++)
+                escreveRegistro(reg[r], arquivo);
 
             fclose(arquivo);
                 
@@ -87,15 +87,16 @@ int main(int argc, char *argv[]) {
 
             if(arquivo_leitura != NULL)
             {
-                registro teste;
+                registro aux;
                 fseek(arquivo_leitura, 0, SEEK_SET);
 				////////////////////////********
                 while(!feof(arquivo_leitura)){
-                    fread(&teste.n_vendas, sizeof(teste.n_vendas), 1, arquivo_leitura);
-                    fread(&teste.infos, sizeof(teste.infos), 1, arquivo_leitura);
-                    fread(&teste.modelo, sizeof(teste.modelo), 1, arquivo_leitura);
-                    fread(&teste.data, sizeof(teste.data), 1, arquivo_leitura);
-                    printf("%d %s %s %s\n", teste.n_vendas, teste.infos, teste.modelo, teste.data);
+                    //leRegistro(&aux, arquivo_leitura);
+					fread(&aux.n_vendas, sizeof(aux.n_vendas), 1, arquivo_leitura);
+					fread(&aux.infos, sizeof(aux.infos), 1, arquivo_leitura);
+					fread(&aux.modelo, sizeof(aux.modelo), 1, arquivo_leitura);
+					fread(&aux.data, sizeof(aux.data), 1, arquivo_leitura);
+                    printf("%d %s %s %s\n", aux.n_vendas, aux.infos, aux.modelo, aux.data);
                 }
                 fclose(arquivo_leitura);
 
@@ -516,8 +517,7 @@ void gerarCampoQuatro(int n, registro* banco_dados){
 	}
 }
 
-void heapify(registro arr[], int n, int i) 
-{ 
+void heapify(registro arr[], int n, int i) { 
 	int largest = i; // Initialize largest as root 
 	int l = 2*i + 1; // left = 2*i + 1 
 	int r = 2*i + 2; // right = 2*i + 2 
@@ -592,3 +592,18 @@ void heapify(registro arr[], int n, int i)
          heapify(arr, i, 0); 
     } 
 } 
+
+void escreveRegistro(registro reg, FILE* arquivo){
+	fwrite(&reg.n_vendas, sizeof(reg.n_vendas), 1, arquivo);
+	fwrite(&reg.infos, sizeof(reg.infos), 1, arquivo);
+	fwrite(&reg.modelo, sizeof(reg.modelo), 1, arquivo);
+	fwrite(&reg.data, sizeof(reg.data), 1, arquivo);
+}
+
+/*void leRegistro(registro* reg, FILE* arquivo){
+	fread(reg->n_vendas, sizeof(reg->n_vendas), 1, arquivo);
+	fread(reg->infos, sizeof(reg->infos), 1, arquivo);
+	fread(reg->modelo, sizeof(reg->modelo), 1, arquivo);
+	fread(reg->data, sizeof(reg->data), 1, arquivo);
+	//printf("%d %s %s %s\n", reg->n_vendas, reg->infos, reg->modelo, reg->data);
+}*/

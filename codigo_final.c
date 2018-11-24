@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
             gerarCampoUm(n, reg);
 			gerarCampoDois(n, reg);
             gerarCampoTres(n, reg);
-            //gerarCampoQuatro(n, reg);
+            gerarCampoQuatro(n, reg);
 
             //for(int i = 0; i < n; i++) printf("%d %d %s %s %s\n", i, reg[i].n_vendas, reg[i].infos, reg[i].modelo, reg[i].data);
 

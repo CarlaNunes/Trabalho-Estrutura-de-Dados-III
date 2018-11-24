@@ -5,8 +5,6 @@
 
 
 void merging(FILE *arquivo1, FILE *arquivo2, FILE *arquivo_saida){
-		
-
 	 size_t len= 100;
 	 int i = 0;
 	 int j = 0;

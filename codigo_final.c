@@ -51,6 +51,7 @@ int main(int argc, char *argv[]) {
 	char* nome_arq3;
     int n;
     int flag_erro = 0;
+	int flag = 0;
     registro* reg;
 	registro reg1_aux;
 	registro reg2_aux;
@@ -180,45 +181,45 @@ int main(int argc, char *argv[]) {
 			//imprimeRegistro(reg2_aux);
 			
 			while (!feof(arquivo1) || !feof(arquivo2)){
-				if(reg1_aux.n_vendas < reg2_aux.n_vendas){
+				if( reg1_aux.n_vendas < reg2_aux.n_vendas && !feof(arquivo1) ){
 					imprimeRegistro(reg1_aux);
 					escreveRegistro(&reg1_aux, arquivo_saida);
 					leRegistro(&reg1_aux, arquivo1);
 				}
-				else if(reg1_aux.n_vendas > reg2_aux.n_vendas){
+				else if(reg1_aux.n_vendas > reg2_aux.n_vendas && !feof(arquivo2) ){
 					imprimeRegistro(reg2_aux);
 					escreveRegistro(&reg2_aux, arquivo_saida);
 					leRegistro(&reg2_aux, arquivo2);
 				}
 				else{   
-					if(reg1_aux.infos < reg2_aux.infos){
+					if(reg1_aux.infos < reg2_aux.infos && !feof(arquivo1) ){
 						imprimeRegistro(reg1_aux);
 						escreveRegistro(&reg1_aux, arquivo_saida);
 						leRegistro(&reg1_aux, arquivo1);
 					}    
-					else if(reg1_aux.infos > reg2_aux.infos){     
+					else if(reg1_aux.infos > reg2_aux.infos && !feof(arquivo2) ){     
 						imprimeRegistro(reg2_aux);
 						escreveRegistro(&reg2_aux, arquivo_saida);
 						leRegistro(&reg2_aux, arquivo2);
 					}
 					else{
-						if(reg1_aux.modelo < reg2_aux.modelo){
+						if(reg1_aux.modelo < reg2_aux.modelo && !feof(arquivo1) ){
 							imprimeRegistro(reg1_aux);
 							escreveRegistro(&reg1_aux, arquivo_saida);
 							leRegistro(&reg1_aux, arquivo1);
 						}    
-						else if(reg1_aux.modelo > reg2_aux.modelo){     
+						else if(reg1_aux.modelo > reg2_aux.modelo && !feof(arquivo2) ){     
 							imprimeRegistro(reg2_aux);
 							escreveRegistro(&reg2_aux, arquivo_saida);
 							leRegistro(&reg2_aux, arquivo2);
 						}
 						else{
-							if(reg1_aux.data < reg2_aux.data){
+							if(reg1_aux.data < reg2_aux.data && !feof(arquivo1) ){
 								imprimeRegistro(reg1_aux);
 								escreveRegistro(&reg1_aux, arquivo_saida);
 								leRegistro(&reg1_aux, arquivo1);
 							}    
-							else if(reg1_aux.data > reg2_aux.data){     
+							else if(reg1_aux.data > reg2_aux.data && !feof(arquivo2) ){     
 								imprimeRegistro(reg2_aux);
 								escreveRegistro(&reg2_aux, arquivo_saida);
 								leRegistro(&reg2_aux, arquivo2);
@@ -256,7 +257,7 @@ int main(int argc, char *argv[]) {
 			FILE *arq_saida;
             arq_saida = fopen(nome_arq3, "w+b");
 
-			int flag = 0;
+			flag = 0;
 			/*
 				0: existem mais nomes
 				1: nao existem mais nomes

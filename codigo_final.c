@@ -183,14 +183,14 @@ int main(int argc, char *argv[]) {
 			registro reg1_aux;
 			fseek(arq_entrada1, 0, SEEK_SET);
 			leRegistro(&reg1_aux, arq_entrada1);
-			imprimeRegistro(reg1_aux);
+			//imprimeRegistro(reg1_aux);
 			if(feof(arq_entrada1)) 
 				flag = 1;
 
 			registro reg2_aux;
 			fseek(arq_entrada2, 0, SEEK_SET);
 			leRegistro(&reg2_aux, arq_entrada2);
-			imprimeRegistro(reg2_aux);
+			//imprimeRegistro(reg2_aux);
 			if(feof(arq_entrada2)) 
 				flag = 1;
 
@@ -311,7 +311,6 @@ void gerarCampoDois(int n, registro* reg){
     while(m < (n*0.75)){
 		for(j= 0; j < 10; j++){
         	for(k = 0; k < 5; k++){
-            
                 strcpy(campo_2, "" ); 
                 volume[i+1] = 40 + rand()%470;
                 verificarRepeticaoCampoDois(i+1,volume);

@@ -13,7 +13,8 @@ typedef struct
 
 
 int verificarRepeticaoCampoUm(registro* banco_dados, int i){
-	for(int j = 0; j < i; j++) {
+	int j;
+	for(j = 0; j < i; j++) {
 		if(banco_dados[j].n_vendas == banco_dados[i].n_vendas) {
 			return 1;
 		}
@@ -32,7 +33,8 @@ void verificarRepeticaoCampoDois(int i, int* volume){
 }
 
 int verificaRepeticoesCampo3(registro* banco_dados, char* modelo, int i) {
-	for(int j = 0; j < i; j++) {
+	int j;
+	for(j = 0; j < i; j++) {
 		if(banco_dados[j].modelo == modelo) {
 			return 1;
 		}
@@ -65,7 +67,8 @@ void gerarCampoUm(int n, registro* banco_dados){
 	}
 
 	//30% dos valores do Campo1 devem ser repetidos
-	for(int j = 0; j < aux2; j++,i++){ 
+	int j;
+	for(j = 0; j < aux2; j++,i++){ 
 		//Salva os valores do campo1(numero de vendas) no banco de dados
 		banco_dados[i].n_vendas = banco_dados[j].n_vendas;
 	}
@@ -107,7 +110,8 @@ void gerarCampoDois(int n, registro* reg){
 
     i = (n*0.75);
 	//25% dos valores do Campo1 devem ser repetidos
-	for(int j = 0; j < (0.25*n); j++){ 
+	int j;
+	for( j = 0; j < (0.25*n); j++){ 
 		strcpy(reg[i].infos, reg[j].infos); 
         i++;
 	}
@@ -251,7 +255,8 @@ int gerarCampoQuatro(int n, registro* banco_dados){
 	}
 
 	//25% dos valores do campo4 devem ser repetidos
-	for(int j = 0; j < aux2; j++,i++){
+	int j;
+	for(j = 0; j < aux2; j++,i++){
 		strcpy(banco_dados[i].data, banco_dados[j].data);
 	}
 }
@@ -267,13 +272,14 @@ int main(int argc, char *argv[]) {
     gerarCampoUm(n, reg);
 	gerarCampoTres(n, reg);
 	gerarCampoQuatro(n, reg);
-    for(int i = 0; i < n; i++) printf("%d %d %s  %s\n", i, reg[i].n_vendas, reg[i].infos, reg[i].data);
+    	int i;
+	for(i = 0; i < n; i++) printf("%d %d %s  %s\n", i, reg[i].n_vendas, reg[i].infos, reg[i].data);
 
     //grava no arquivo
 
     arquivo = fopen("notas.dat", "w+b");
-
-    for(int r = 0; r < n; r++){
+	int r;
+    for(r = 0; r < n; r++){
         fwrite(&reg[r].n_vendas, sizeof(reg[r].n_vendas), 1, arquivo);
         fwrite(&reg[r].infos, sizeof(reg[r].infos), 1, arquivo);
 		fwrite(&reg[r].modelo, sizeof(reg[r].modelo), 1, arquivo);
@@ -284,7 +290,8 @@ int main(int argc, char *argv[]) {
 
     //printa o arquivo
     fseek(arquivo, 0, SEEK_SET);
-    for(int r = 0; r < n; r++){
+    	int r;
+	for(r = 0; r < n; r++){
         fread(&teste.n_vendas, sizeof(reg[r].n_vendas), 1, arquivo);
         fread(&teste.infos, sizeof(reg[r].infos), 1, arquivo);
 		fread(&teste.modelo, sizeof(reg[r].modelo), 1, arquivo);

@@ -346,9 +346,9 @@ void gerarCampoDois(int n, registro* reg){
         	for(k = 0; k < 5; k++){
             
                 strcpy(campo_2, "" ); 
-                volume[i+1] = 40 + rand()%470;
-                verificarRepeticaoCampoDois(i+1,volume);
-                sprintf(str, "%d", volume[i+1]);
+                volume[m+1] = 40 + rand()%470;
+                verificarRepeticaoCampoDois(m+1,volume);
+                sprintf(str, "%d", volume[m+1]);
                 strcat(campo_2, str);
                 strcat(campo_2, " ");
                 strcat(campo_2, motor[j]);

@@ -38,30 +38,37 @@ void leRegistro(registro*, FILE*);
 void imprimeRegistro(registro);
 
 int main(int argc, char *argv[]) {
-	srand((unsigned)time(NULL)); //Semente da random
+	//Semente da funcao randomomica
+	srand((unsigned)time(NULL)); 
 
-    // Possiveis parametros recebidos na execucao do codigo
-    int arg1 = atoi(argv[1]);
-    char* arg2 = argv[2];
-    char* arg3 = argv[3];
-    char* arg4 = argv[4];
+    // Armazenamentos dos parametros recebidos na execucao do codigo
+	// arguments[0] = funcao a ser executada
+	char** arguments = (char**) malloc (argc * sizeof(char*));
+	int aux;
+	for(aux=0; aux<argc-1; aux++)
+		arguments[aux] = argv[aux+1];
+	int func = atoi(arguments[0]);
 
+	char* nome_arq;
     char* nome_arq1;
 	char* nome_arq2;
 	char* nome_arq3;
+	char** nomes_arqs;
     int n;
+	int i, j, k;
     int flag_erro = 0;
 	int flag = 0;
     registro* reg;
 	registro reg1_aux;
 	registro reg2_aux;
 
-    switch(arg1)
+    switch(func)
     {
         // Gerar arquivo de dados
         case 1:        
-            nome_arq1 = arg2; 
-            n = atoi(arg3);
+            nome_arq = arguments[1]; 
+			strcat(nome_arq, ".dat");
+            n = atoi(arguments[2]);
 			reg = (registro*) malloc (n * sizeof(registro));
 
             gerarCampoUm(n, reg);
@@ -72,7 +79,7 @@ int main(int argc, char *argv[]) {
             //for(int i = 0; i < n; i++) printf("%d %d %s %s %s\n", i, reg[i].n_vendas, reg[i].infos, reg[i].modelo, reg[i].data);
 
             FILE *arquivo;
-            arquivo = fopen(nome_arq1, "w+b");
+            arquivo = fopen(nome_arq, "w+b");
 
             for(int r = 0; r < n; r++)
                 escreveRegistro(&reg[r], arquivo);
@@ -87,19 +94,19 @@ int main(int argc, char *argv[]) {
 
         // Ler e printar o arquivo
         case 2:
-            nome_arq1 = arg2; 
+            nome_arq = arguments[1]; 
+			strcat(nome_arq, ".dat");
 
             FILE *arquivo_leitura;
-            arquivo_leitura = fopen(nome_arq1, "r+b");
+            arquivo_leitura = fopen(nome_arq, "r+b");
 
             if(arquivo_leitura != NULL)
             {
-                registro aux;
+                registro registro_aux;
                 fseek(arquivo_leitura, 0, SEEK_SET);
-				////////////////////////********
-                while(!feof(arquivo_leitura)){
-                    leRegistro(&aux, arquivo_leitura);
-                    imprimeRegistro(aux);
+				
+                while( fread(&registro_aux, sizeof(registro_aux), 1, arquivo_leitura) != 0 ){
+                    imprimeRegistro(registro_aux);
                 }
                 fclose(arquivo_leitura);
 
@@ -112,10 +119,11 @@ int main(int argc, char *argv[]) {
 
         // Ordenação interna
         case 3:
-			nome_arq1 = arg2; 
+			nome_arq = arguments[1]; 
+			strcat(nome_arq, ".dat");
 
             FILE *arquivo_ordenar;
-            arquivo_ordenar = fopen(nome_arq1, "r+b");
+            arquivo_ordenar = fopen(nome_arq, "r+b");
 
 			int count = -1;
             if(arquivo_ordenar != NULL)
@@ -159,9 +167,12 @@ int main(int argc, char *argv[]) {
 
 		// Merging
         case 4:
-			nome_arq1 = arg2;
-			nome_arq2 = arg3;
-			nome_arq3 = arg4;
+			nome_arq1 = arguments[1];
+			strcat(nome_arq1, ".dat");
+			nome_arq2 = arguments[2];
+			strcat(nome_arq2, ".dat");
+			nome_arq3 = arguments[3];
+			strcat(nome_arq3, ".dat");
 
 			FILE *arquivo1;
             arquivo1 = fopen(nome_arq1, "r+b");
@@ -244,9 +255,12 @@ int main(int argc, char *argv[]) {
 
 		// Matching
         case 5:
-			nome_arq1 = arg2;
-			nome_arq2 = arg3;
-			nome_arq3 = arg4;
+			nome_arq1 = arguments[1];
+			strcat(nome_arq1, ".dat");
+			nome_arq2 = arguments[2];
+			strcat(nome_arq2, ".dat");
+			nome_arq3 = arguments[3];
+			strcat(nome_arq3, ".dat");
 
 			FILE *arq_entrada1;
             arq_entrada1 = fopen(nome_arq1, "r+b");
@@ -306,6 +320,34 @@ int main(int argc, char *argv[]) {
 
 		// Multiway merging
 		case 6:
+			//printf("Argumentos: %d \n", argc);
+			nomes_arqs = (char**) malloc( (argc-2) * sizeof(char*));
+			for(k=0; k<(argc-3); k++) {
+				nomes_arqs[k] = arguments[k+1]; // nome dos arquivos de entrada
+				//printf("Entrada %s \n", nomes_arqs[k]);
+			}
+			nome_arq = arguments[argc-2]; // nome do arquivo de saida
+			//printf("Saida %s \n", nome_arq);
+
+			/*registro menor_registro;
+
+			for(i=0; i<n; i++){
+				fread(&nome[i], sizeof(menor), 1, arquivo[i]);
+				do {
+						fread(&nome[i], sizeof(Registro), 1, arquivo[i]);
+						menor.n_vendas = nome[i].n_vendas;
+						if(nome[i].n_vendas < menor.n_vendas){
+								menor = nome[i];
+							fwrite (&menor, sizeof(char),1, arq_saida );
+						}
+
+						else{
+							fwrite (&nome[j], sizeof(char),1, arq_saida );
+						}
+
+					j++;
+
+				} while (!feof(arquivo[i]) ); // enquanto não chegar ao final do arquivo*/
 
         break;
 

@@ -36,6 +36,7 @@ void escreveRegistro(registro*, FILE*);
 void leRegistro(registro*, FILE*);
 
 void imprimeRegistro(registro*);
+void multiway_merging(FILE **, FILE * , int);
 
 int main(int argc, char *argv[]) {
 	//Semente da funcao randomomica
@@ -707,4 +708,61 @@ void leRegistro(registro* reg, FILE* arquivo){
 
 void imprimeRegistro(registro* reg){
 	printf("%d %s %s %s\n", reg->n_vendas, reg->infos, reg->modelo, reg->data);
+}
+int is_valid(const int *valido, int n){
+    int i;
+
+    for (i = 0; i < n; i++) {
+        if(valido[i] == 1){
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int encontra_menor(const Registro *tmp, const int *valido, int n){
+    int menor;
+    int i;
+
+    //Encontra primeiro válido
+    for (i = 0; i < n; i++) {
+        if (valido[i]){
+            menor = i;
+            break;
+        }
+    }
+
+    //Compara com os demais (apenas com os válidos)
+    for (i = menor+1; i < n; i++) {
+        if ((valido[i]) && (tmp[i].n_vendas < tmp[menor].n_vendas)) {
+            menor = i;
+        }
+    }
+
+    return menor;
+}
+
+void multiway_merging(FILE **arquivo, FILE *arq_saida , int n){
+    int i = 0;
+
+    int menor_indice;
+
+    Registro *tmp = (Registro *) malloc(n * sizeof(Registro));
+    int *valido = (int *) malloc(n * sizeof(int));
+
+    for (i = 0; i < n; i++) {
+        //Se valido[i] for menor que 1, deu erro ou EOF
+        valido[i] = fread(&tmp[i], sizeof(Registro), 1, arquivo[i]);
+    }
+
+    while(is_valid(valido, n)){
+        menor_indice = encontra_menor(tmp, valido, n);
+        fwrite(&tmp[menor_indice], sizeof(Registro),1, arq_saida);
+        valido[menor_indice] = fread(&tmp[menor_indice], sizeof(Registro), 1, arquivo[menor_indice]);
+    }
+   
+    free(tmp);
+    free(valido);
+
 }

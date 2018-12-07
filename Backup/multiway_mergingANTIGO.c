@@ -18,7 +18,7 @@ void multiway_merging(FILE **arquivo, FILE *arq_saida , int n){
     int i = 0,j = 0;
 
     Registro menor;
-        struct  Registro *nome = malloc(n * sizeof(struct Resgistro));
+        Registro *nome = malloc(n * sizeof(menor));
 
 
        for(i = 0;i < n; i++){
@@ -49,12 +49,12 @@ void multiway_merging(FILE **arquivo, FILE *arq_saida , int n){
 
 int main(int argc, char *argv[]) {
     int n = 2;
-	FILE** arquivo = malloc(sizeof(FILE*) * (n-1));//Criar e alocar vetor de arquivos pois, não sabemos quantos iremos usar.
+	FILE** arquivo = malloc(sizeof(FILE*) * n);//Criar e alocar vetor de arquivos pois, não sabemos quantos iremos usar.
 	FILE *arq_saida;
 
     //Estou considerando somente 2 arquivos no teste.
-    arquivo[0] = fopen("notas.dat", "r+b");
-	arquivo[1] = fopen("notas2.dat", "r+b");
+    arquivo[0] = fopen("1arq.dat", "r+b");
+	arquivo[1] = fopen("2arq.dat", "r+b");
 	arq_saida = fopen("multiway.dat", "w+b");
 
 	if(arquivo[0] == NULL){
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
 
   		else{
 
-  			multiway_merging(*arquivo,arq_saida ,n);
+  			multiway_merging(arquivo,arq_saida ,n);
   		}
 
 

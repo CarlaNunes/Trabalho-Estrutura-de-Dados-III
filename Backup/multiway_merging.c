@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
     int i;
 
     for (i = 0; i < n; i++){
-        sprintf(nome, "%darquivo.dat", (i+1));
+        sprintf(nome, "%darq.dat", (i+1));
         arquivo[i] = fopen(nome,"r+b");
         if (arquivo[i] == NULL){
             printf("Erro, nao foi possivel abrir o arquivo de entrada %s\n", nome);

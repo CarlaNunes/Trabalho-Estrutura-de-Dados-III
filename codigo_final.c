@@ -52,7 +52,10 @@ int main(int argc, char *argv[]) {
 	char** arguments = (char**) malloc ((argc-1) * sizeof(char*));
 	int aux;
 	for(aux=0; aux<argc-1; aux++)
+	{
 		arguments[aux] = argv[aux+1];
+		//printf("Argumentos %d: %s \n", aux, arguments[aux]);
+	}
 		
 	int func = atoi(arguments[0]);
 
@@ -325,7 +328,20 @@ int main(int argc, char *argv[]) {
 		
 	else if(func == 6) // Multiway merging
 	{
+		FILE** arqs_entrada = (FILE**) malloc( (argc-3) * sizeof(FILE*));
+		//nomes_arqs = (char**) malloc((argc-3) * sizeof(char*));
+		//nome_arq = ;
+		for(int r=0; r<(argc-3); r++) 
+		{
+			arqs_entrada[r] = fopen(arguments[r+1], "r+b");
+			//printf("Arquivo entrada %d: %s \n", r, arguments[r+1]);
+			if(arqs_entrada[r] == NULL) printf("Erro ao abrir arquivo de entrada! \n");
+		}
+		FILE *arq_saida = fopen(arguments[argc-2], "w+b");
+		//printf("Arquivo saida: %s \n", arguments[argc-2]);
+		if(arq_saida == NULL) printf("Erro ao abrir arquivo de saida! \n");
 
+		multiway_merging(arqs_entrada, arq_saida, argc-3);
 	}
 		
 	else if(func == 7) // Ordenação externa

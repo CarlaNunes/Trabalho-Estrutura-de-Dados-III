@@ -36,7 +36,12 @@ void escreveRegistro(registro*, FILE*);
 void leRegistro(registro*, FILE*);
 
 void imprimeRegistro(registro*);
-void multiway_merging(FILE **, FILE * , int);
+
+int is_valid(const int*, int);
+
+int encontra_menor(const registro*, const int*, int);
+
+void multiway_merging(FILE**, FILE*, int);
 
 int main(int argc, char *argv[]) {
 	//Semente da funcao randomomica
@@ -56,6 +61,7 @@ int main(int argc, char *argv[]) {
 	char* nome_arq2;
 	char* nome_arq3;
 	char** nomes_arqs;
+
     int n;
 	int i, j, k;
     int flag_erro = 0;
@@ -64,302 +70,268 @@ int main(int argc, char *argv[]) {
 	registro reg1_aux;
 	registro reg2_aux;
 
-    switch(func)
-    {
-        // Gerar arquivo de dados
-        case 1:    
-			n = atoi(arguments[2]);    
-            nome_arq = arguments[1]; 
-			strcat(nome_arq, ".dat");
+	if(func == 1)  // Gerar arquivo de dados
+	{
+		n = atoi(arguments[2]);    
+		nome_arq = arguments[1]; 
 
-			reg = (registro*) malloc (n * sizeof(registro));
+		reg = (registro*) malloc (n * sizeof(registro));
 
-            gerarCampoUm(n, reg);
-			gerarCampoDois(n, reg);
-            gerarCampoTres(n, reg);
-            gerarCampoQuatro(n, reg);
+		gerarCampoUm(n, reg);
+		gerarCampoDois(n, reg);
+		gerarCampoTres(n, reg);
+		gerarCampoQuatro(n, reg);
 
-            //for(int i = 0; i < n; i++) printf("%d %d %s %s %s\n", i, reg[i].n_vendas, reg[i].infos, reg[i].modelo, reg[i].data);
+		//for(int i = 0; i < n; i++) printf("%d %d %s %s %s\n", i, reg[i].n_vendas, reg[i].infos, reg[i].modelo, reg[i].data);
 
-            FILE *arquivo;
-            arquivo = fopen(nome_arq, "w+b");
+		FILE *arquivo;
+		arquivo = fopen(nome_arq, "w+b");
 
-            for(int r = 0; r < n; r++)
-                escreveRegistro(&reg[r], arquivo);
+		for(int r = 0; r < n; r++)
+			escreveRegistro(&reg[r], arquivo);
 
-            fclose(arquivo);
-                
-            if(flag_erro == 0)
-                printf("Arquivo gerado.\n");
-            else
-                printf("Falha no processamento.\n");
-        break;
-
-        // Ler e printar o arquivo
-        case 2:
-            nome_arq = arguments[1]; 
-			strcat(nome_arq, ".dat");
-
-            FILE *arquivo_leitura;
-            arquivo_leitura = fopen(nome_arq, "r+b");
-
-            if(arquivo_leitura != NULL)
-            {
-                registro* registro_aux;
-                fseek(arquivo_leitura, 0, SEEK_SET);
-				
-                while( fread(registro_aux, sizeof(*registro_aux), 1, arquivo_leitura) != 0 ){
-                    imprimeRegistro(registro_aux);
-                }
-                fclose(arquivo_leitura);
-
-                if(flag_erro == 1)
-                    printf("Falha no processamento.\n");
-            }
-            else
-                printf("Arquivo vazio.\n");
-        break;
-
-        // Ordenação interna
-        case 3:
-			nome_arq = arguments[1]; 
-			strcat(nome_arq, ".dat");
-
-            FILE *arquivo_ordenar;
-            arquivo_ordenar = fopen(nome_arq, "r+b");
-
-			int count = -1;
-            if(arquivo_ordenar != NULL)
-            {
-                registro teste;
-                //fseek(arquivo_ordenar, 0, SEEK_SET);
-				////////////////////////********
-                while(!feof(arquivo_ordenar)){
-					leRegistro(&teste,arquivo_ordenar);
-                    //printf("%d %s %s %s\n", teste.n_vendas, teste.infos, teste.modelo, teste.data);
-					count++;
-                }
-                //fclose(arquivo_ordenar);
-
-				n = count;
-				reg = (registro*) malloc (n*sizeof(registro));
-				fseek(arquivo_ordenar, 0, SEEK_SET);
-				for(int r = 0; r < n; r++){
-					leRegistro(&reg[r],arquivo_ordenar);
-					// printf("%d %s %s\n", regs[r].n_vendas, regs[r].infos, regs[r].data);
-				}
-				heapSort(reg, n);
-				//for(int r = 0; r < n; r++) printf("%d %s %s %s\n", reg[r].n_vendas, reg[r].modelo, reg[r].infos, reg[r].data);
-
-				fseek(arquivo_ordenar, 0, SEEK_SET);
-				for(int r = 0; r < n; r++){
-					escreveRegistro(&reg[r],arquivo_ordenar);
-				}
-
-				fclose(arquivo_ordenar); 
-
-				//printf("Linhas: %d \n", count);
-
-                if(flag_erro == 1)
-                    printf("Falha no processamento.\n");
-            }
-            else
-                printf("Arquivo vazio.\n");
-
-        break;
-
-		// Merging
-        case 4:
-			nome_arq1 = arguments[1];
-			strcat(nome_arq1, ".dat");
-			nome_arq2 = arguments[2];
-			strcat(nome_arq2, ".dat");
-			nome_arq3 = arguments[3];
-			strcat(nome_arq3, ".dat");
-
-			FILE *arquivo1;
-            arquivo1 = fopen(nome_arq1, "r+b");
-
-			FILE *arquivo2;
-           	arquivo2 = fopen(nome_arq2, "r+b");
-
-			FILE *arquivo_saida;
-            arquivo_saida = fopen(nome_arq3, "w+b");
-
-			fseek(arquivo1, 0, SEEK_SET);
-			leRegistro(&reg1_aux, arquivo1);
-			//imprimeRegistro(reg1_aux);
-
-			fseek(arquivo2, 0, SEEK_SET);
-			leRegistro(&reg2_aux, arquivo2);
-			//imprimeRegistro(reg2_aux);
+		fclose(arquivo);
 			
-			while (!feof(arquivo1) || !feof(arquivo2)){
-				if( reg1_aux.n_vendas < reg2_aux.n_vendas && !feof(arquivo1) ){
-					imprimeRegistro(&reg1_aux);
+		if(flag_erro == 0)
+			printf("Arquivo gerado.\n");
+		else
+			printf("Falha no processamento.\n");
+	}
+
+    else if(func == 2) // Ler e printar o arquivo
+	{
+		nome_arq = arguments[1]; 
+
+		FILE *arquivo_leitura;
+		arquivo_leitura = fopen(nome_arq, "r+b");
+
+		if(arquivo_leitura != NULL)
+		{
+			registro registro_aux;
+			fseek(arquivo_leitura, 0, SEEK_SET);
+			
+			while( fread(&registro_aux, sizeof(registro_aux), 1, arquivo_leitura) != 0 ){
+				imprimeRegistro(&registro_aux);
+			}
+			fclose(arquivo_leitura);
+
+			if(flag_erro == 1)
+				printf("Falha no processamento.\n");
+		}
+		else
+			printf("Arquivo vazio.\n");
+	}
+            
+    else if(func == 3)   // Ordenação interna
+	{
+		nome_arq = arguments[1]; 
+
+		FILE *arquivo_ordenar;
+		arquivo_ordenar = fopen(nome_arq, "r+b");
+
+		int count = -1;
+		if(arquivo_ordenar != NULL)
+		{
+			registro teste;
+			//fseek(arquivo_ordenar, 0, SEEK_SET);
+			////////////////////////********
+			while(!feof(arquivo_ordenar)){
+				leRegistro(&teste,arquivo_ordenar);
+				//printf("%d %s %s %s\n", teste.n_vendas, teste.infos, teste.modelo, teste.data);
+				count++;
+			}
+			//fclose(arquivo_ordenar);
+
+			n = count;
+			reg = (registro*) malloc (n*sizeof(registro));
+			fseek(arquivo_ordenar, 0, SEEK_SET);
+			for(int r = 0; r < n; r++){
+				leRegistro(&reg[r],arquivo_ordenar);
+				// printf("%d %s %s\n", regs[r].n_vendas, regs[r].infos, regs[r].data);
+			}
+			heapSort(reg, n);
+			//for(int r = 0; r < n; r++) printf("%d %s %s %s\n", reg[r].n_vendas, reg[r].modelo, reg[r].infos, reg[r].data);
+
+			fseek(arquivo_ordenar, 0, SEEK_SET);
+			for(int r = 0; r < n; r++){
+				escreveRegistro(&reg[r],arquivo_ordenar);
+			}
+
+			fclose(arquivo_ordenar); 
+
+			//printf("Linhas: %d \n", count);
+
+			if(flag_erro == 1)
+				printf("Falha no processamento.\n");
+		}
+		else
+			printf("Arquivo vazio.\n");
+	}
+			
+
+	else if(func == 4) // Merging
+	{
+		nome_arq1 = arguments[1];
+		nome_arq2 = arguments[2];
+		nome_arq3 = arguments[3];
+
+		//printf("Argumentos: %s, %s, %s \n", arguments[1], arguments[2], arguments[3]);
+		//printf("Nome dos arquivos: %s, %s, %s \n", nome_arq1, nome_arq2, nome_arq3);
+
+		FILE *arquivo1;
+		arquivo1 = fopen(nome_arq1, "r+b");
+
+		FILE *arquivo2;
+		arquivo2 = fopen(nome_arq2, "r+b");
+
+		FILE *arquivo_saida;
+		arquivo_saida = fopen(nome_arq3, "w+b");
+
+		fseek(arquivo1, 0, SEEK_SET);
+		leRegistro(&reg1_aux, arquivo1);
+		//imprimeRegistro(reg1_aux);
+
+		fseek(arquivo2, 0, SEEK_SET);
+		leRegistro(&reg2_aux, arquivo2);
+		//imprimeRegistro(reg2_aux);
+		
+		while (!feof(arquivo1) || !feof(arquivo2)){
+			if( reg1_aux.n_vendas < reg2_aux.n_vendas && !feof(arquivo1) ){
+				//imprimeRegistro(&reg1_aux);
+				escreveRegistro(&reg1_aux, arquivo_saida);
+				leRegistro(&reg1_aux, arquivo1);
+			}
+			else if(reg1_aux.n_vendas > reg2_aux.n_vendas && !feof(arquivo2) ){
+				//imprimeRegistro(&reg2_aux);
+				escreveRegistro(&reg2_aux, arquivo_saida);
+				leRegistro(&reg2_aux, arquivo2);
+			}
+			else{   
+				if(reg1_aux.infos < reg2_aux.infos && !feof(arquivo1) ){
+					//imprimeRegistro(&reg1_aux);
 					escreveRegistro(&reg1_aux, arquivo_saida);
 					leRegistro(&reg1_aux, arquivo1);
-				}
-				else if(reg1_aux.n_vendas > reg2_aux.n_vendas && !feof(arquivo2) ){
-					imprimeRegistro(&reg2_aux);
+				}    
+				else if(reg1_aux.infos > reg2_aux.infos && !feof(arquivo2) ){     
+					//imprimeRegistro(&reg2_aux);
 					escreveRegistro(&reg2_aux, arquivo_saida);
 					leRegistro(&reg2_aux, arquivo2);
 				}
-				else{   
-					if(reg1_aux.infos < reg2_aux.infos && !feof(arquivo1) ){
-						imprimeRegistro(&reg1_aux);
+				else{
+					if(reg1_aux.modelo < reg2_aux.modelo && !feof(arquivo1) ){
+						//imprimeRegistro(&reg1_aux);
 						escreveRegistro(&reg1_aux, arquivo_saida);
 						leRegistro(&reg1_aux, arquivo1);
 					}    
-					else if(reg1_aux.infos > reg2_aux.infos && !feof(arquivo2) ){     
-						imprimeRegistro(&reg2_aux);
+					else if(reg1_aux.modelo > reg2_aux.modelo && !feof(arquivo2) ){     
+						//imprimeRegistro(&reg2_aux);
 						escreveRegistro(&reg2_aux, arquivo_saida);
 						leRegistro(&reg2_aux, arquivo2);
 					}
 					else{
-						if(reg1_aux.modelo < reg2_aux.modelo && !feof(arquivo1) ){
-							imprimeRegistro(&reg1_aux);
+						if(reg1_aux.data < reg2_aux.data && !feof(arquivo1) ){
+							//imprimeRegistro(&reg1_aux);
 							escreveRegistro(&reg1_aux, arquivo_saida);
 							leRegistro(&reg1_aux, arquivo1);
 						}    
-						else if(reg1_aux.modelo > reg2_aux.modelo && !feof(arquivo2) ){     
-							imprimeRegistro(&reg2_aux);
+						else if(reg1_aux.data > reg2_aux.data && !feof(arquivo2) ){     
+							//imprimeRegistro(&reg2_aux);
 							escreveRegistro(&reg2_aux, arquivo_saida);
 							leRegistro(&reg2_aux, arquivo2);
 						}
 						else{
-							if(reg1_aux.data < reg2_aux.data && !feof(arquivo1) ){
-								imprimeRegistro(&reg1_aux);
-								escreveRegistro(&reg1_aux, arquivo_saida);
-								leRegistro(&reg1_aux, arquivo1);
-							}    
-							else if(reg1_aux.data > reg2_aux.data && !feof(arquivo2) ){     
-								imprimeRegistro(&reg2_aux);
-								escreveRegistro(&reg2_aux, arquivo_saida);
-								leRegistro(&reg2_aux, arquivo2);
-							}
-							else{
-								imprimeRegistro(&reg1_aux);
-								imprimeRegistro(&reg2_aux);
-								escreveRegistro(&reg1_aux, arquivo_saida);
-								escreveRegistro(&reg2_aux, arquivo_saida);
-								leRegistro(&reg1_aux, arquivo1);
-								leRegistro(&reg2_aux, arquivo2);
-							}	
-						}
+							//imprimeRegistro(&reg1_aux);
+							//imprimeRegistro(&reg2_aux);
+							escreveRegistro(&reg1_aux, arquivo_saida);
+							escreveRegistro(&reg2_aux, arquivo_saida);
+							leRegistro(&reg1_aux, arquivo1);
+							leRegistro(&reg2_aux, arquivo2);
+						}	
 					}
-				}			
-			}
-
-			fclose(arquivo1);
-			fclose(arquivo2);
-			fclose(arquivo_saida);
-        break;
-
-		// Matching
-        case 5:
-			nome_arq1 = arguments[1];
-			strcat(nome_arq1, ".dat");
-			nome_arq2 = arguments[2];
-			strcat(nome_arq2, ".dat");
-			nome_arq3 = arguments[3];
-			strcat(nome_arq3, ".dat");
-
-			FILE *arq_entrada1;
-            arq_entrada1 = fopen(nome_arq1, "r+b");
-
-			FILE *arq_entrada2;
-           	arq_entrada2 = fopen(nome_arq2, "r+b");
-
-			FILE *arq_saida;
-            arq_saida = fopen(nome_arq3, "w+b");
-
-			flag = 0;
-			/*
-				0: existem mais nomes
-				1: nao existem mais nomes
-			*/
-
-			fseek(arq_entrada1, 0, SEEK_SET);
-			leRegistro(&reg1_aux, arq_entrada1);
-			//imprimeRegistro(reg1_aux);
-			if(feof(arq_entrada1)) 
-				flag = 1;
-
-			fseek(arq_entrada2, 0, SEEK_SET);
-			leRegistro(&reg2_aux, arq_entrada2);
-			//imprimeRegistro(reg2_aux);
-			if(feof(arq_entrada2)) 
-				flag = 1;
-
-			while(flag == 0){
-				if(reg1_aux.n_vendas < reg2_aux.n_vendas){
-					leRegistro(&reg1_aux, arq_entrada1);
-
-					if(feof(arq_entrada1)) 
-						flag = 1;
 				}
-				else if(reg1_aux.n_vendas > reg2_aux.n_vendas){
-					leRegistro(&reg2_aux, arq_entrada2);
+			}			
+		}
 
-					if(feof(arq_entrada2)) 
-						flag = 1;
-				}
-				else{ 
-					escreveRegistro(&reg1_aux, arq_saida);
+		fclose(arquivo1);
+		fclose(arquivo2);
+		fclose(arquivo_saida);
+	}
 
-					leRegistro(&reg1_aux, arq_entrada1);
-					leRegistro(&reg2_aux, arq_entrada2);
+		
+	else if(func == 5) // Matching
+	{
+		nome_arq1 = arguments[1];
+		nome_arq2 = arguments[2];
+		nome_arq3 = arguments[3];
 
-					if(feof(arq_entrada1) || feof(arq_entrada2)) 
-						flag = 1;
-				}
+		//printf("Argumentos: %s, %s, %s \n", arguments[1], arguments[2], arguments[3]);
+		//printf("Nome dos arquivos: %s, %s, %s \n", nome_arq1, nome_arq2, nome_arq3);
+
+		FILE *arq_entrada1;
+		arq_entrada1 = fopen(nome_arq1, "r+b");
+
+		FILE *arq_entrada2;
+		arq_entrada2 = fopen(nome_arq2, "r+b");
+
+		FILE *arq_saida;
+		arq_saida = fopen(nome_arq3, "w+b");
+
+		flag = 0;
+		/*
+			0: existem mais nomes
+			1: nao existem mais nomes
+		*/
+
+		fseek(arq_entrada1, 0, SEEK_SET);
+		leRegistro(&reg1_aux, arq_entrada1);
+		//imprimeRegistro(reg1_aux);
+		if(feof(arq_entrada1)) 
+			flag = 1;
+
+		fseek(arq_entrada2, 0, SEEK_SET);
+		leRegistro(&reg2_aux, arq_entrada2);
+		//imprimeRegistro(reg2_aux);
+		if(feof(arq_entrada2)) 
+			flag = 1;
+
+		while(flag == 0){
+			if(reg1_aux.n_vendas < reg2_aux.n_vendas){
+				leRegistro(&reg1_aux, arq_entrada1);
+
+				if(feof(arq_entrada1)) 
+					flag = 1;
 			}
+			else if(reg1_aux.n_vendas > reg2_aux.n_vendas){
+				leRegistro(&reg2_aux, arq_entrada2);
 
-			fclose(arq_entrada1);
-			fclose(arq_entrada2);
-			fclose(arq_saida);
-        break;
-
-		// Multiway merging
-		case 6:
-			//printf("Argumentos: %d \n", argc);
-			nomes_arqs = (char**) malloc( (argc-2) * sizeof(char*));
-			for(k=0; k<(argc-3); k++) {
-				nomes_arqs[k] = arguments[k+1]; // nome dos arquivos de entrada
-				//printf("Entrada %s \n", nomes_arqs[k]);
+				if(feof(arq_entrada2)) 
+					flag = 1;
 			}
-			nome_arq = arguments[argc-2]; // nome do arquivo de saida
-			//printf("Saida %s \n", nome_arq);
+			else{ 
+				escreveRegistro(&reg1_aux, arq_saida);
 
-			/*registro menor_registro;
+				leRegistro(&reg1_aux, arq_entrada1);
+				leRegistro(&reg2_aux, arq_entrada2);
 
-			for(i=0; i<n; i++){
-				fread(&nome[i], sizeof(menor), 1, arquivo[i]);
-				do {
-						fread(&nome[i], sizeof(Registro), 1, arquivo[i]);
-						menor.n_vendas = nome[i].n_vendas;
-						if(nome[i].n_vendas < menor.n_vendas){
-								menor = nome[i];
-							fwrite (&menor, sizeof(char),1, arq_saida );
-						}
+				if(feof(arq_entrada1) || feof(arq_entrada2)) 
+					flag = 1;
+			}
+		}
 
-						else{
-							fwrite (&nome[j], sizeof(char),1, arq_saida );
-						}
+		fclose(arq_entrada1);
+		fclose(arq_entrada2);
+		fclose(arq_saida);
+	}
+		
+	else if(func == 6) // Multiway merging
+	{
 
-					j++;
+	}
+		
+	else if(func == 7) // Ordenação externa
+	{
 
-				} while (!feof(arquivo[i]) ); // enquanto não chegar ao final do arquivo*/
-
-        break;
-
-		// Ordenação externa
-		case 7:
-
-        break;
-
-    }
+	}
 
     return 0;
 }
@@ -510,8 +482,9 @@ void gerarCampoQuatro(int n, registro* banco_dados){
 
 	//Vetor para salvar uma data
     char data[10];
-	sprintf(data, "##/##/####");
-	//char data[10] = {'#','#','/','#','#','/','#','#','#','#'};
+	
+	data[2] = '/';
+	data[5] = '/';
 
 	//85% dos valores do campo4 não podem ser repetidos
 	int aux1, aux2, i = 0;
@@ -596,13 +569,13 @@ void gerarCampoQuatro(int n, registro* banco_dados){
 					data[1] = '0';
 			}
 			//printf("%s \n", data);
-			strcpy(banco_dados[i].data, data);
+			strncpy(banco_dados[i].data, data,10);
 		}while(verificaRepeticoesCampoQuatro(banco_dados, data, i));
 	}
 
 	//25% dos valores do campo4 devem ser repetidos
 	for(int j = 0; j < aux2; j++,i++){
-		strcpy(banco_dados[i].data, banco_dados[j].data);
+		strncpy(banco_dados[i].data, banco_dados[j].data,10);
 	}
 }
 
@@ -709,6 +682,7 @@ void leRegistro(registro* reg, FILE* arquivo){
 void imprimeRegistro(registro* reg){
 	printf("%d %s %s %s\n", reg->n_vendas, reg->infos, reg->modelo, reg->data);
 }
+
 int is_valid(const int *valido, int n){
     int i;
 
@@ -721,7 +695,7 @@ int is_valid(const int *valido, int n){
     return 0;
 }
 
-int encontra_menor(const Registro *tmp, const int *valido, int n){
+int encontra_menor(const registro *tmp, const int *valido, int n){
     int menor;
     int i;
 
@@ -748,21 +722,20 @@ void multiway_merging(FILE **arquivo, FILE *arq_saida , int n){
 
     int menor_indice;
 
-    Registro *tmp = (Registro *) malloc(n * sizeof(Registro));
+    registro *tmp = (registro *) malloc(n * sizeof(registro));
     int *valido = (int *) malloc(n * sizeof(int));
 
     for (i = 0; i < n; i++) {
         //Se valido[i] for menor que 1, deu erro ou EOF
-        valido[i] = fread(&tmp[i], sizeof(Registro), 1, arquivo[i]);
+        valido[i] = fread(&tmp[i], sizeof(registro), 1, arquivo[i]);
     }
 
     while(is_valid(valido, n)){
         menor_indice = encontra_menor(tmp, valido, n);
-        fwrite(&tmp[menor_indice], sizeof(Registro),1, arq_saida);
-        valido[menor_indice] = fread(&tmp[menor_indice], sizeof(Registro), 1, arquivo[menor_indice]);
+        fwrite(&tmp[menor_indice], sizeof(registro),1, arq_saida);
+        valido[menor_indice] = fread(&tmp[menor_indice], sizeof(registro), 1, arquivo[menor_indice]);
     }
    
     free(tmp);
     free(valido);
-
 }

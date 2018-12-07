@@ -35,7 +35,7 @@ void escreveRegistro(registro*, FILE*);
 
 void leRegistro(registro*, FILE*);
 
-void imprimeRegistro(registro);
+void imprimeRegistro(registro*);
 
 int main(int argc, char *argv[]) {
 	//Semente da funcao randomomica
@@ -104,10 +104,10 @@ int main(int argc, char *argv[]) {
 
             if(arquivo_leitura != NULL)
             {
-                registro registro_aux;
+                registro* registro_aux;
                 fseek(arquivo_leitura, 0, SEEK_SET);
 				
-                while( fread(&registro_aux, sizeof(registro_aux), 1, arquivo_leitura) != 0 ){
+                while( fread(registro_aux, sizeof(*registro_aux), 1, arquivo_leitura) != 0 ){
                     imprimeRegistro(registro_aux);
                 }
                 fclose(arquivo_leitura);
@@ -195,51 +195,51 @@ int main(int argc, char *argv[]) {
 			
 			while (!feof(arquivo1) || !feof(arquivo2)){
 				if( reg1_aux.n_vendas < reg2_aux.n_vendas && !feof(arquivo1) ){
-					imprimeRegistro(reg1_aux);
+					imprimeRegistro(&reg1_aux);
 					escreveRegistro(&reg1_aux, arquivo_saida);
 					leRegistro(&reg1_aux, arquivo1);
 				}
 				else if(reg1_aux.n_vendas > reg2_aux.n_vendas && !feof(arquivo2) ){
-					imprimeRegistro(reg2_aux);
+					imprimeRegistro(&reg2_aux);
 					escreveRegistro(&reg2_aux, arquivo_saida);
 					leRegistro(&reg2_aux, arquivo2);
 				}
 				else{   
 					if(reg1_aux.infos < reg2_aux.infos && !feof(arquivo1) ){
-						imprimeRegistro(reg1_aux);
+						imprimeRegistro(&reg1_aux);
 						escreveRegistro(&reg1_aux, arquivo_saida);
 						leRegistro(&reg1_aux, arquivo1);
 					}    
 					else if(reg1_aux.infos > reg2_aux.infos && !feof(arquivo2) ){     
-						imprimeRegistro(reg2_aux);
+						imprimeRegistro(&reg2_aux);
 						escreveRegistro(&reg2_aux, arquivo_saida);
 						leRegistro(&reg2_aux, arquivo2);
 					}
 					else{
 						if(reg1_aux.modelo < reg2_aux.modelo && !feof(arquivo1) ){
-							imprimeRegistro(reg1_aux);
+							imprimeRegistro(&reg1_aux);
 							escreveRegistro(&reg1_aux, arquivo_saida);
 							leRegistro(&reg1_aux, arquivo1);
 						}    
 						else if(reg1_aux.modelo > reg2_aux.modelo && !feof(arquivo2) ){     
-							imprimeRegistro(reg2_aux);
+							imprimeRegistro(&reg2_aux);
 							escreveRegistro(&reg2_aux, arquivo_saida);
 							leRegistro(&reg2_aux, arquivo2);
 						}
 						else{
 							if(reg1_aux.data < reg2_aux.data && !feof(arquivo1) ){
-								imprimeRegistro(reg1_aux);
+								imprimeRegistro(&reg1_aux);
 								escreveRegistro(&reg1_aux, arquivo_saida);
 								leRegistro(&reg1_aux, arquivo1);
 							}    
 							else if(reg1_aux.data > reg2_aux.data && !feof(arquivo2) ){     
-								imprimeRegistro(reg2_aux);
+								imprimeRegistro(&reg2_aux);
 								escreveRegistro(&reg2_aux, arquivo_saida);
 								leRegistro(&reg2_aux, arquivo2);
 							}
 							else{
-								imprimeRegistro(reg1_aux);
-								imprimeRegistro(reg2_aux);
+								imprimeRegistro(&reg1_aux);
+								imprimeRegistro(&reg2_aux);
 								escreveRegistro(&reg1_aux, arquivo_saida);
 								escreveRegistro(&reg2_aux, arquivo_saida);
 								leRegistro(&reg1_aux, arquivo1);
@@ -680,7 +680,16 @@ void heapify(registro arr[], int n, int i) {
          heapify(arr, i, 0); 
     } 
 } 
-
+void status(FILE* arquivo){
+	char* status;
+	if(fread(status, 1, 1, arquivo) == 0){
+		*status = '1';
+		fwrite(status, 1, 1, arquivo);
+	}else{
+		*status = '0';
+		fwrite(status, 1, 1, arquivo);
+	}
+}
 void escreveRegistro(registro* reg, FILE* arquivo){
 	fwrite(&(reg->n_vendas), sizeof(reg->n_vendas), 1, arquivo);
 	fwrite(reg->infos, sizeof(reg->infos), 1, arquivo);
@@ -696,6 +705,6 @@ void leRegistro(registro* reg, FILE* arquivo){
 	//printf("%d %s %s %s\n", reg->n_vendas, reg->infos, reg->modelo, reg->data);
 }
 
-void imprimeRegistro(registro reg){
-	printf("%-5d %-30s %-20s %.10s\n", reg.n_vendas, reg.infos, reg.modelo, reg.data);
+void imprimeRegistro(registro* reg){
+	printf("%d %s %s %s\n", reg->n_vendas, reg->infos, reg->modelo, reg->data);
 }

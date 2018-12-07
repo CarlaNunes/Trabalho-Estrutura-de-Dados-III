@@ -319,8 +319,8 @@ int main(int argc, char *argv[])
 			else numS = n/pag + 1;
 			printf("Número de páginas: %d\n", numS);
 
-			FILE *sub[numS];
-			char subArq[numS][5];
+			FILE *sub[11];//numero máximo de subarquivos considerando NMAX = 6000
+			char subArq[11][5];
 			reg = (registro *)malloc(n * sizeof(registro));
 			fseek(arquivo_ordenar, 0, SEEK_SET);
 			//for (int r = 0; r < n /pag; r++){
@@ -354,31 +354,50 @@ int main(int argc, char *argv[])
 				//fclose(sub[r]);
 			}
 			fclose(arquivo_ordenar);
-			/*int iter, aux = 0;
-			if(numS/2 == 0) iter = numS/2;
-			else iter = numS/2+1;
-			while(iter != 0){
-				while(pag*(aux+2)){
-				for (int s = 0; s < pag/2; s++){
-					if(feof(arquivo_ordenar)) break;
-					leRegistro(&reg, sub[aux]);
-					leRegistro(&reg, sub[aux]);
-					aux++;
-					//printf("%d %s %s %s\n", reg[s].n_vendas, reg[s].infos, reg[s].modelo, reg[s].data);
+
+			int iter = 0;
+			while(numS > 1){
+				printf("%d\n", numS);
+				iter++;
+				if(numS%2 == 0){
+					for (int i = 0; i < (numS/2); i++){
+						printf("%d %d %d\n", iter, i, numS/2);
+						//merge sub 2i e 2i+1
+						//com a condição de que tudo caiba em disco, se não, guarda 250
+						sprintf(subArq[numS+i], "sub_%d_%d.dat", iter, i);
+						sub[numS+i] = fopen(subArq[numS+i], "w+b");
+					}
+					numS = numS/2;
+				}else{
+					if (numS%2 != 0){
+						int aux = numS - 1;
+						for (int j = 0; j < (aux/2); j++){
+							printf("%d %d %d\n", iter, j, aux/2);
+							//merge sub 2i e 2i+1
+							//com a condição de que tudo caiba em disco, se não, guarda 250
+							sprintf(subArq[numS+j], "sub_%d_%d.dat", iter, j);
+							sub[numS+j] = fopen(subArq[numS+j], "w+b");
+						}
+						strcpy(subArq[aux/2], subArq[aux]);
+						numS = (numS/2) + 1;
+					}
 				}
-				sprintf(subArq[r], "sub_%d.dat", r+1);
-				/*imprimeRegistro(reg2_aux);
-
-
-				if(iter/2 == 0) iter = iter/2;
-				else iter = iter/2+1;
-				}
-
+    		}
+			int t = 0;
+			//fclose(sub[0]);
+			/*while(sub[t] != NULL){
+				printf("Esse é o t: %d\n", t);
+				fclose(sub[t]);
+				t++;
 			}*/
-
-			
-
-			//printf("Linhas: %d \n", count);
+			/*for(t = 0; t < 11; t++){
+				if(sub[t] == NULL){
+					printf(" ");
+				}else{
+					printf("Esse é o t: %d\n", t);
+					fclose(sub[t]);
+				}
+			}*/
 
 			if (flag_erro == 1)
 				printf("Falha no processamento.\n");

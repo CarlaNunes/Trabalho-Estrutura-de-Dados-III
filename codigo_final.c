@@ -43,10 +43,11 @@ int main(int argc, char *argv[]) {
 
     // Armazenamentos dos parametros recebidos na execucao do codigo
 	// arguments[0] = funcao a ser executada
-	char** arguments = (char**) malloc (argc * sizeof(char*));
+	char** arguments = (char**) malloc ((argc-1) * sizeof(char*));
 	int aux;
 	for(aux=0; aux<argc-1; aux++)
 		arguments[aux] = argv[aux+1];
+		
 	int func = atoi(arguments[0]);
 
 	char* nome_arq;
@@ -65,10 +66,11 @@ int main(int argc, char *argv[]) {
     switch(func)
     {
         // Gerar arquivo de dados
-        case 1:        
+        case 1:    
+			n = atoi(arguments[2]);    
             nome_arq = arguments[1]; 
 			strcat(nome_arq, ".dat");
-            n = atoi(arguments[2]);
+
 			reg = (registro*) malloc (n * sizeof(registro));
 
             gerarCampoUm(n, reg);

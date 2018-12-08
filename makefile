@@ -1,9 +1,9 @@
 ############################# Makefile ##########################
-all: trabalho
+all: programaTrab
 
-trabalho: manipularArquivo.o main.o 
+programaTrab: manipularArquivo.o main.o 
         # O compilador faz a ligação entre os dois objetos
-		gcc -o trabalho manipularArquivo.o main.o
+		gcc -o programaTrab manipularArquivo.o main.o
 #-----> Distancia com o botão TAB ### e não com espaços
 
 manipularArquivo.o: manipularArquivo.c
@@ -16,4 +16,4 @@ clean:
 		rm -rf *.o
 
 mrproper: clean
-		rm -rf trabalho
+		rm -rf programaTrab

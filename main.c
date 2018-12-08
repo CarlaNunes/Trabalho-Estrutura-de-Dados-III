@@ -30,6 +30,7 @@ int main(int argc, char *argv[]) {
 	char* nome_arq2;
 	char* nome_arq3;
 	char** nomes_arqs;
+	char estado;
 
     registro* reg;
 	registro reg1_aux;
@@ -62,10 +63,14 @@ int main(int argc, char *argv[]) {
 
 		FILE *arquivo;
 		arquivo = fopen(nome_arq, "w+b");
+		estado = '0';
+		fwrite(&estado,1,1, arquivo);
 
 		for(r = 0; r < n; r++)
 			escreveRegistro(&reg[r], arquivo);
-
+		fseek(arquivo, 0, SEEK_SET);
+		estado = '1';
+		fwrite(&estado,1,1, arquivo);
 		fclose(arquivo);
 			
 		if(flag_erro == 0)
@@ -80,15 +85,21 @@ int main(int argc, char *argv[]) {
 
 		FILE *arquivo_leitura;
 		arquivo_leitura = fopen(nome_arq, "r+b");
+		
 
 		if(arquivo_leitura != NULL)
 		{
 			registro registro_aux;
 			fseek(arquivo_leitura, 0, SEEK_SET);
+			estado = '0';
+			fwrite(&estado,1,1, arquivo_leitura);
 			
 			while( fread(&registro_aux, sizeof(registro_aux), 1, arquivo_leitura) != 0 ){
 				imprimeRegistro(&registro_aux);
 			}
+			fseek(arquivo_leitura, 0, SEEK_SET);
+			estado = '1';
+			fwrite(&estado,1,1, arquivo_leitura);
 			fclose(arquivo_leitura);
 
 			if(flag_erro == 1)
@@ -109,7 +120,11 @@ int main(int argc, char *argv[]) {
 		if(arquivo_ordenar != NULL)
 		{
 			registro teste;
-			/*fseek(arquivo_ordenar, 0, SEEK_SET);*/
+	
+			fseek(arquivo_ordenar, 0, SEEK_SET);
+			estado = '0';
+			fwrite(&estado,1,1, arquivo_ordenar);
+
 			while(!feof(arquivo_ordenar)){
 				leRegistro(&teste,arquivo_ordenar);
 				/*printf("%d %s %s %s\n", teste.n_vendas, teste.infos, teste.modelo, teste.data);*/
@@ -131,7 +146,9 @@ int main(int argc, char *argv[]) {
 			for(r = 0; r < n; r++){
 				escreveRegistro(&reg[r],arquivo_ordenar);
 			}
-
+			fseek(arquivo_ordenar, 0, SEEK_SET);
+			estado = '1';
+			fwrite(&estado,1,1, arquivo_ordenar);
 			fclose(arquivo_ordenar); 
 
 			/*printf("Linhas: %d \n", count);*/
@@ -155,17 +172,22 @@ int main(int argc, char *argv[]) {
 
 		FILE *arquivo1;
 		arquivo1 = fopen(nome_arq1, "r+b");
+		fseek(arquivo1, 0, SEEK_SET);
+		estado = '0';
+		fwrite(&estado,1,1, arquivo1);
 
 		FILE *arquivo2;
 		arquivo2 = fopen(nome_arq2, "r+b");
+		fseek(arquivo2, 0, SEEK_SET);
+		fwrite(&estado,1,1, arquivo2);
 
 		FILE *arquivo_saida;
 		arquivo_saida = fopen(nome_arq3, "w+b");
+		fseek(arquivo_saida, 0, SEEK_SET);
+		fwrite(&estado,1,1, arquivo_saida);
 
-		fseek(arquivo1, 0, SEEK_SET);
 		leRegistro(&reg1_aux, arquivo1);
 
-		fseek(arquivo2, 0, SEEK_SET);
 		leRegistro(&reg2_aux, arquivo2);
 		
 		while (!feof(arquivo1) || !feof(arquivo2)){
@@ -214,6 +236,13 @@ int main(int argc, char *argv[]) {
 				}
 			}			
 		}
+		estado = '1';
+		fseek(arquivo1, 0, SEEK_SET);	
+		fwrite(&estado,1,1, arquivo1);
+		fseek(arquivo2, 0, SEEK_SET);	
+		fwrite(&estado,1,1, arquivo2);
+		fseek(arquivo_saida, 0, SEEK_SET);	
+		fwrite(&estado,1,1, arquivo_saida);
 
 		fclose(arquivo1);
 		fclose(arquivo2);
@@ -232,12 +261,19 @@ int main(int argc, char *argv[]) {
 
 		FILE *arq_entrada1;
 		arq_entrada1 = fopen(nome_arq1, "r+b");
+		fseek(arq_entrada1, 0, SEEK_SET);
+		estado = '0';
+		fwrite(&estado,1,1, arq_entrada1);
 
 		FILE *arq_entrada2;
 		arq_entrada2 = fopen(nome_arq2, "r+b");
+		fseek(arq_entrada2, 0, SEEK_SET);
+		fwrite(&estado,1,1, arq_entrada2);
 
 		FILE *arq_saida;
 		arq_saida = fopen(nome_arq3, "w+b");
+		fseek(arq_saida, 0, SEEK_SET);
+		fwrite(&estado,1,1, arq_saida);
 
 		flag = 0;
 		/*
@@ -245,12 +281,12 @@ int main(int argc, char *argv[]) {
 			1: nao existem mais nomes
 		*/
 
-		fseek(arq_entrada1, 0, SEEK_SET);
+	
 		leRegistro(&reg1_aux, arq_entrada1);
 		if(feof(arq_entrada1)) 
 			flag = 1;
 
-		fseek(arq_entrada2, 0, SEEK_SET);
+	
 		leRegistro(&reg2_aux, arq_entrada2);
 		if(feof(arq_entrada2)) 
 			flag = 1;
@@ -279,6 +315,14 @@ int main(int argc, char *argv[]) {
 			}
 		}
 
+		estado = '1';
+		fseek(arq_entrada1, 0, SEEK_SET);	
+		fwrite(&estado,1,1, arq_entrada1);
+		fseek(arq_entrada2, 0, SEEK_SET);	
+		fwrite(&estado,1,1, arq_entrada2);
+		fseek(arq_saida, 0, SEEK_SET);	
+		fwrite(&estado,1,1, arq_saida);
+
 		fclose(arq_entrada1);
 		fclose(arq_entrada2);
 		fclose(arq_saida);
@@ -288,17 +332,31 @@ int main(int argc, char *argv[]) {
 	{
 		FILE** arqs_entrada = (FILE**) malloc( (argc-3) * sizeof(FILE*));
 
-		for(r=0; r<(argc-3); r++) 
-		{
+		for(r=0; r<(argc-3); r++) {
+			estado = '0';
 			arqs_entrada[r] = fopen(arguments[r+1], "r+b");
+			fseek(arqs_entrada[r], 0, SEEK_SET);
+			fwrite(&estado,1,1, arqs_entrada[r]);
 			/*printf("Arquivo entrada %d: %s \n", r, arguments[r+1]);
 			if(arqs_entrada[r] == NULL) printf("Erro ao abrir arquivo de entrada! \n");*/
 		}
 		FILE *arq_saida = fopen(arguments[argc-2], "w+b");
+		fseek(arq_saida, 0, SEEK_SET);
+		fwrite(&estado,1,1, arq_saida);
 		/*printf("Arquivo saida: %s \n", arguments[argc-2]);
 		if(arq_saida == NULL) printf("Erro ao abrir arquivo de saida! \n");*/
 
 		multiway_merging(arqs_entrada, arq_saida, argc-3);
+		estado = '1';
+
+		for(r=0; r<(argc-3); r++) {
+			fseek(arqs_entrada[r], 0, SEEK_SET);
+			fwrite(&estado,1,1, arqs_entrada[r]);
+			fclose(arqs_entrada[r]);
+		}
+		fseek(arq_saida, 0, SEEK_SET);
+		fwrite(&estado,1,1, arq_saida);
+		fclose(arq_saida);
 	}
 		
 	else if(func == 7) /* Ordenação externa */

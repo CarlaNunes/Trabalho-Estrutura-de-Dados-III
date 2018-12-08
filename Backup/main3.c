@@ -144,16 +144,15 @@ int main(int argc, char *argv[]) {
 			}
 			n = count;
 			reg = (registro*) malloc (n*sizeof(registro));
-			fseek(arquivo_ordenar, 1, SEEK_SET);
+			fseek(arquivo_ordenar, 0, SEEK_SET);
 			/*Le registro por registro e escreve em um vetor desse tipo*/
 			for(r = 0; r < n; r++){
-				
 				leRegistro(&reg[r],arquivo_ordenar);
 			}
 			/*ordena o vetor obtido e o armazena no arquivo final*/
 			heapSort(reg, n);
 
-			fseek(arquivo_ordenar, 1, SEEK_SET);
+			fseek(arquivo_ordenar, 0, SEEK_SET);
 			for(r = 0; r < n; r++){
 				escreveRegistro(&reg[r],arquivo_ordenar);
 			}
@@ -164,7 +163,6 @@ int main(int argc, char *argv[]) {
 			fwrite(&estado,1,1, arquivo_ordenar);
 			fclose(arquivo_ordenar); 
 
-			printf("Arquivo gerado.\n");
 
 			if(flag_erro == 1)
 				printf("Falha no processamento.\n");
@@ -212,34 +210,34 @@ int main(int argc, char *argv[]) {
 				escreveRegistro(&reg2_aux, arquivo_saida);
 				leRegistro(&reg2_aux, arquivo2);
 			}
-			else{   
-				if( (strcmp(reg1_aux.infos,reg2_aux.infos) < 0) && !feof(arquivo1) ){
+			else if (reg1_aux.n_vendas == reg2_aux.n_vendas){   
+				if(reg1_aux.infos < reg2_aux.infos && !feof(arquivo1) ){
 					escreveRegistro(&reg1_aux, arquivo_saida);
 					leRegistro(&reg1_aux, arquivo1);
 				}    
-				else if( (strcmp(reg1_aux.infos,reg2_aux.infos) > 0) && !feof(arquivo2) ){     
+				else if(reg1_aux.infos > reg2_aux.infos && !feof(arquivo2) ){     
 					escreveRegistro(&reg2_aux, arquivo_saida);
 					leRegistro(&reg2_aux, arquivo2);
 				}
-				else{
-					if( (strcmp(reg1_aux.modelo,reg2_aux.modelo) < 0) && !feof(arquivo1) ){
+				else if(reg1_aux.infos == reg2_aux.infos ){
+					if(reg1_aux.modelo < reg2_aux.modelo && !feof(arquivo1) ){
 						escreveRegistro(&reg1_aux, arquivo_saida);
 						leRegistro(&reg1_aux, arquivo1);
 					}    
-					else if( (strcmp(reg1_aux.modelo,reg2_aux.modelo) > 0) && !feof(arquivo2) ){     
+					else if(reg1_aux.modelo > reg2_aux.modelo && !feof(arquivo2) ){     
 						escreveRegistro(&reg2_aux, arquivo_saida);
 						leRegistro(&reg2_aux, arquivo2);
 					}
-					else{
-						if( (strcmp(reg1_aux.data,reg2_aux.data) < 0) && !feof(arquivo1) ){
+					else if(reg1_aux.modelo == reg2_aux.modelo){
+						if(reg1_aux.data < reg2_aux.data && !feof(arquivo1) ){
 							escreveRegistro(&reg1_aux, arquivo_saida);
 							leRegistro(&reg1_aux, arquivo1);
 						}    
-						else if( (strcmp(reg1_aux.data,reg2_aux.data) > 0) && !feof(arquivo2) ){     
+						else if(reg1_aux.data > reg2_aux.data && !feof(arquivo2) ){     
 							escreveRegistro(&reg2_aux, arquivo_saida);
 							leRegistro(&reg2_aux, arquivo2);
 						}
-						else{
+						else if(reg1_aux.data == reg2_aux.data){
 							escreveRegistro(&reg1_aux, arquivo_saida);
 							escreveRegistro(&reg2_aux, arquivo_saida);
 							leRegistro(&reg1_aux, arquivo1);
@@ -249,7 +247,6 @@ int main(int argc, char *argv[]) {
 				}
 			}			
 		}
-
 		estado = '1';
 		fseek(arquivo1, 0, SEEK_SET);	
 		fwrite(&estado,1,1, arquivo1);
@@ -258,14 +255,9 @@ int main(int argc, char *argv[]) {
 		fseek(arquivo_saida, 0, SEEK_SET);	
 		fwrite(&estado,1,1, arquivo_saida);
 
-		printf("Arquivo gerado.\n");
-
 		fclose(arquivo1);
 		fclose(arquivo2);
 		fclose(arquivo_saida);
-
-		if(flag_erro == 1)
-			printf("Falha no processamento.\n");
 	}
 
 		
@@ -293,7 +285,6 @@ int main(int argc, char *argv[]) {
 		arq_saida = fopen(nome_arq3, "w+b");
 		fseek(arq_saida, 0, SEEK_SET);
 		fwrite(&estado,1,1, arq_saida);
-
 	
 		leRegistro(&reg1_aux, arq_entrada1);
 	
@@ -307,45 +298,39 @@ int main(int argc, char *argv[]) {
 				leRegistro(&reg2_aux, arq_entrada2);
 			}
 			else{   
-				if( (strcmp(reg1_aux.infos,reg2_aux.infos) < 0) && !feof(arq_entrada1) ){
+				if(reg1_aux.infos < reg2_aux.infos && !feof(arq_entrada1) ){
 					escreveRegistro(&reg1_aux, arq_saida);
 					escreveRegistro(&reg2_aux, arq_saida);
 					leRegistro(&reg1_aux, arq_entrada1);
-					leRegistro(&reg2_aux, arq_entrada2);
 				}    
-				else if( (strcmp(reg1_aux.infos,reg2_aux.infos) > 0) && !feof(arq_entrada2) ){     
+				else if(reg1_aux.infos > reg2_aux.infos && !feof(arq_entrada2) ){     
 					escreveRegistro(&reg2_aux, arq_saida);
 					escreveRegistro(&reg1_aux, arq_saida);
-					leRegistro(&reg1_aux, arq_entrada2);
 					leRegistro(&reg2_aux, arq_entrada2);
 				}
 				else{
-					if( (strcmp(reg1_aux.modelo,reg2_aux.modelo) < 0) && !feof(arq_entrada1) ){
+					if(reg1_aux.modelo < reg2_aux.modelo && !feof(arq_entrada1) ){
 						escreveRegistro(&reg1_aux, arq_saida);
 						escreveRegistro(&reg2_aux, arq_saida);
-						leRegistro(&reg1_aux, arq_entrada2);
-						leRegistro(&reg2_aux, arq_entrada2);
+						leRegistro(&reg1_aux, arq_entrada1);
 					}    
-					else if( (strcmp(reg1_aux.modelo,reg2_aux.modelo) > 0) && !feof(arq_entrada2) ){     
+					else if(reg1_aux.modelo > reg2_aux.modelo && !feof(arq_entrada2) ){     
 						escreveRegistro(&reg2_aux, arq_saida);
-						escreveRegistro(&reg1_aux, arq_saida);
-						leRegistro(&reg1_aux, arq_entrada2);
+						sescreveRegistro(&reg1_aux, arq_saida);
 						leRegistro(&reg2_aux, arq_entrada2);
 					}
 					else{
-						if( (strcmp(reg1_aux.data,reg2_aux.data) < 0) && !feof(arq_entrada1) ){
+						if(reg1_aux.data < reg2_aux.data && !feof(arq_entrada1) ){
 							escreveRegistro(&reg1_aux, arq_saida);
 							escreveRegistro(&reg2_aux, arq_saida);
 							leRegistro(&reg1_aux, arq_entrada1);
-							leRegistro(&reg2_aux, arq_entrada2);
 						}    
-						else if( (strcmp(reg1_aux.data,reg2_aux.data) > 0) && !feof(arq_entrada2) ){     
+						else if(reg1_aux.data > reg2_aux.data && !feof(arq_entrada2) ){     
 							escreveRegistro(&reg2_aux, arq_saida);
 							escreveRegistro(&reg1_aux, arq_saida);
-							leRegistro(&reg1_aux, arq_entrada2);
 							leRegistro(&reg2_aux, arq_entrada2);
 						}
-						else{
+						else if(reg1_aux.data == reg2_aux.data){
 							escreveRegistro(&reg1_aux, arq_saida);
 							escreveRegistro(&reg2_aux, arq_saida);
 							leRegistro(&reg1_aux, arq_entrada1);
@@ -355,30 +340,6 @@ int main(int argc, char *argv[]) {
 				}
 			}			
 		}
-
-		/*while(flag == 0){
-			if(reg1_aux.n_vendas < reg2_aux.n_vendas){
-				leRegistro(&reg1_aux, arq_entrada1);
-
-				if(feof(arq_entrada1)) 
-					flag = 1;
-			}
-			else if(reg1_aux.n_vendas > reg2_aux.n_vendas){
-				leRegistro(&reg2_aux, arq_entrada2);
-
-				if(feof(arq_entrada2)) 
-					flag = 1;
-			}
-			else{ 
-				escreveRegistro(&reg1_aux, arq_saida);
-
-				leRegistro(&reg1_aux, arq_entrada1);
-				leRegistro(&reg2_aux, arq_entrada2);
-
-				if(feof(arq_entrada1) || feof(arq_entrada2)) 
-					flag = 1;
-			}
-		}*/
 
 		estado = '1';
 		fseek(arq_entrada1, 0, SEEK_SET);	
@@ -391,11 +352,6 @@ int main(int argc, char *argv[]) {
 		fclose(arq_entrada1);
 		fclose(arq_entrada2);
 		fclose(arq_saida);
-
-		printf("Arquivo gerado.\n");
-
-		if(flag_erro == 1)
-			printf("Falha no processamento.\n");
 	}
 		
 	else if(func == 6) /* Multiway merging */
@@ -419,8 +375,6 @@ int main(int argc, char *argv[]) {
 		multiway_merging(arqs_entrada, arq_saida, argc-3);
 		estado = '1';
 
-
-
 		for(r=0; r<(argc-3); r++) {
 			fseek(arqs_entrada[r], 0, SEEK_SET);
 			fwrite(&estado,1,1, arqs_entrada[r]);
@@ -429,11 +383,6 @@ int main(int argc, char *argv[]) {
 		fseek(arq_saida, 0, SEEK_SET);
 		fwrite(&estado,1,1, arq_saida);
 		fclose(arq_saida);
-
-		printf("Arquivo gerado.\n");
-
-		if(flag_erro == 1)
-			printf("Falha no processamento.\n");
 	}
 		
 	else if(func == 7) /* Ordenação externa */
@@ -563,12 +512,14 @@ int main(int argc, char *argv[]) {
 				
 			}
 
-		}
-
-		printf("Arquivo gerado.\n");
 		
 		if (flag_erro == 1)
 			printf("Falha no processamento.\n");
+		}
+		else
+			printf("Arquivo vazio.\n");
+
+
 	}
 
     return 0;
@@ -581,13 +532,12 @@ void heapify(registro arr[], int n, int i) {
 	int r = 2*i + 2; 
 	registro aux;
 
-	if (l < n && arr[l].n_vendas > arr[largest].n_vendas){
+	if (l < n && arr[l].n_vendas > arr[largest].n_vendas)
 		largest = l;
-	}
 
-	if (r < n && arr[r].n_vendas > arr[largest].n_vendas){
+	if (r < n && arr[r].n_vendas > arr[largest].n_vendas) 
 		largest = r;  
-	}
+
 		
 	if (l < n && arr[l].n_vendas == arr[largest].n_vendas){
 		if(strcmp(arr[l].infos, arr[largest].infos) > 0){

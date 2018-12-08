@@ -24,6 +24,14 @@ int main(int argc, char *argv[]) {
 	int i, j, k, r, aux;
     int flag_erro = 0;
 	int flag = 0;
+
+	char* nome_arq;
+    char* nome_arq1;
+	char* nome_arq2;
+	char* nome_arq3;
+	char** nomes_arqs;
+	char estado;
+
 	int count = -1;
 	/*Tamanho máximo dos subarquivos iniciais (capacidade do buffer)*/
 	int pag = 1000;
@@ -32,13 +40,6 @@ int main(int argc, char *argv[]) {
 	FILE *sub[11];
 	char subArq[11][12];
 	registro reg_auxiliar;
-
-	char* nome_arq;
-    char* nome_arq1;
-	char* nome_arq2;
-	char* nome_arq3;
-	char** nomes_arqs;
-	char estado;
 
     registro* reg;
 	registro reg1_aux;
@@ -60,7 +61,6 @@ int main(int argc, char *argv[]) {
 		n = atoi(arguments[2]);    
 		nome_arq = arguments[1]; 
 
-		/*cria um vetor de registros de tamanho n gera os campos, já os adicionando no vetor*/
 		reg = (registro*) malloc (n * sizeof(registro));
 
 		gerarCampoUm(n, reg);
@@ -68,18 +68,15 @@ int main(int argc, char *argv[]) {
 		gerarCampoTres(n, reg);
 		gerarCampoQuatro(n, reg);
 
+		/*for(int i = 0; i < n; i++) printf("%d %d %s %s %s\n", i, reg[i].n_vendas, reg[i].infos, reg[i].modelo, reg[i].data);*/
 
 		FILE *arquivo;
-		/*muda o status do arquivo para 0*/ 
 		arquivo = fopen(nome_arq, "w+b");
 		estado = '0';
 		fwrite(&estado,1,1, arquivo);
 
-		/*grava os registros no arquivo*/
 		for(r = 0; r < n; r++)
 			escreveRegistro(&reg[r], arquivo);
-
-		/*muda o status do arquivo para 1*/
 		fseek(arquivo, 0, SEEK_SET);
 		estado = '1';
 		fwrite(&estado,1,1, arquivo);
@@ -96,21 +93,19 @@ int main(int argc, char *argv[]) {
 		nome_arq = arguments[1]; 
 
 		FILE *arquivo_leitura;
-		/*abre o arquivo, e se o mesmo não estiver vazio:*/
 		arquivo_leitura = fopen(nome_arq, "r+b");
+		
 
 		if(arquivo_leitura != NULL)
 		{
 			registro registro_aux;
-			/*muda o status do arquivo para 0*/
 			fseek(arquivo_leitura, 0, SEEK_SET);
 			estado = '0';
 			fwrite(&estado,1,1, arquivo_leitura);
-			/*Lê registro um por um e os printa*/
+			
 			while( fread(&registro_aux, sizeof(registro_aux), 1, arquivo_leitura) != 0 ){
 				imprimeRegistro(&registro_aux);
 			}
-			/*muda o status do arquivo para 1*/
 			fseek(arquivo_leitura, 0, SEEK_SET);
 			estado = '1';
 			fwrite(&estado,1,1, arquivo_leitura);
@@ -126,7 +121,7 @@ int main(int argc, char *argv[]) {
     else if(func == 3)   /* Ordenação interna */
 	{
 		nome_arq = arguments[1]; 
-		/*abre o arquivo inicial, e se o mesmo não estiver vazio:*/
+
 		FILE *arquivo_ordenar;
 		arquivo_ordenar = fopen(nome_arq, "r+b");
 
@@ -134,37 +129,38 @@ int main(int argc, char *argv[]) {
 		if(arquivo_ordenar != NULL)
 		{
 			registro teste;
-			/*muda o status do arquivo para 0*/
+	
 			fseek(arquivo_ordenar, 0, SEEK_SET);
 			estado = '0';
 			fwrite(&estado,1,1, arquivo_ordenar);
+
 			while(!feof(arquivo_ordenar)){
 				leRegistro(&teste,arquivo_ordenar);
+				/*printf("%d %s %s %s\n", teste.n_vendas, teste.infos, teste.modelo, teste.data);*/
 				count++;
 			}
+			/*fclose(arquivo_ordenar);*/
+
 			n = count;
 			reg = (registro*) malloc (n*sizeof(registro));
-			fseek(arquivo_ordenar, 1, SEEK_SET);
-			/*Le registro por registro e escreve em um vetor desse tipo*/
+			fseek(arquivo_ordenar, 0, SEEK_SET);
 			for(r = 0; r < n; r++){
-				
 				leRegistro(&reg[r],arquivo_ordenar);
+				/* printf("%d %s %s\n", regs[r].n_vendas, regs[r].infos, regs[r].data); */
 			}
-			/*ordena o vetor obtido e o armazena no arquivo final*/
 			heapSort(reg, n);
+			/*for(int r = 0; r < n; r++) printf("%d %s %s %s\n", reg[r].n_vendas, reg[r].modelo, reg[r].infos, reg[r].data);*/
 
-			fseek(arquivo_ordenar, 1, SEEK_SET);
+			fseek(arquivo_ordenar, 0, SEEK_SET);
 			for(r = 0; r < n; r++){
 				escreveRegistro(&reg[r],arquivo_ordenar);
 			}
-
-			/*muda o status do arquivo para 1*/
 			fseek(arquivo_ordenar, 0, SEEK_SET);
 			estado = '1';
 			fwrite(&estado,1,1, arquivo_ordenar);
 			fclose(arquivo_ordenar); 
 
-			printf("Arquivo gerado.\n");
+			/*printf("Linhas: %d \n", count);*/
 
 			if(flag_erro == 1)
 				printf("Falha no processamento.\n");
@@ -213,29 +209,29 @@ int main(int argc, char *argv[]) {
 				leRegistro(&reg2_aux, arquivo2);
 			}
 			else{   
-				if( (strcmp(reg1_aux.infos,reg2_aux.infos) < 0) && !feof(arquivo1) ){
+				if(reg1_aux.infos < reg2_aux.infos && !feof(arquivo1) ){
 					escreveRegistro(&reg1_aux, arquivo_saida);
 					leRegistro(&reg1_aux, arquivo1);
 				}    
-				else if( (strcmp(reg1_aux.infos,reg2_aux.infos) > 0) && !feof(arquivo2) ){     
+				else if(reg1_aux.infos > reg2_aux.infos && !feof(arquivo2) ){     
 					escreveRegistro(&reg2_aux, arquivo_saida);
 					leRegistro(&reg2_aux, arquivo2);
 				}
 				else{
-					if( (strcmp(reg1_aux.modelo,reg2_aux.modelo) < 0) && !feof(arquivo1) ){
+					if(reg1_aux.modelo < reg2_aux.modelo && !feof(arquivo1) ){
 						escreveRegistro(&reg1_aux, arquivo_saida);
 						leRegistro(&reg1_aux, arquivo1);
 					}    
-					else if( (strcmp(reg1_aux.modelo,reg2_aux.modelo) > 0) && !feof(arquivo2) ){     
+					else if(reg1_aux.modelo > reg2_aux.modelo && !feof(arquivo2) ){     
 						escreveRegistro(&reg2_aux, arquivo_saida);
 						leRegistro(&reg2_aux, arquivo2);
 					}
 					else{
-						if( (strcmp(reg1_aux.data,reg2_aux.data) < 0) && !feof(arquivo1) ){
+						if(reg1_aux.data < reg2_aux.data && !feof(arquivo1) ){
 							escreveRegistro(&reg1_aux, arquivo_saida);
 							leRegistro(&reg1_aux, arquivo1);
 						}    
-						else if( (strcmp(reg1_aux.data,reg2_aux.data) > 0) && !feof(arquivo2) ){     
+						else if(reg1_aux.data > reg2_aux.data && !feof(arquivo2) ){     
 							escreveRegistro(&reg2_aux, arquivo_saida);
 							leRegistro(&reg2_aux, arquivo2);
 						}
@@ -249,7 +245,6 @@ int main(int argc, char *argv[]) {
 				}
 			}			
 		}
-
 		estado = '1';
 		fseek(arquivo1, 0, SEEK_SET);	
 		fwrite(&estado,1,1, arquivo1);
@@ -258,14 +253,9 @@ int main(int argc, char *argv[]) {
 		fseek(arquivo_saida, 0, SEEK_SET);	
 		fwrite(&estado,1,1, arquivo_saida);
 
-		printf("Arquivo gerado.\n");
-
 		fclose(arquivo1);
 		fclose(arquivo2);
 		fclose(arquivo_saida);
-
-		if(flag_erro == 1)
-			printf("Falha no processamento.\n");
 	}
 
 		
@@ -294,69 +284,23 @@ int main(int argc, char *argv[]) {
 		fseek(arq_saida, 0, SEEK_SET);
 		fwrite(&estado,1,1, arq_saida);
 
+		flag = 0;
+		/*
+			0: existem mais nomes
+			1: nao existem mais nomes
+		*/
+
 	
 		leRegistro(&reg1_aux, arq_entrada1);
+		if(feof(arq_entrada1)) 
+			flag = 1;
+
 	
 		leRegistro(&reg2_aux, arq_entrada2);
+		if(feof(arq_entrada2)) 
+			flag = 1;
 
-		while (!feof(arq_entrada1) || !feof(arq_entrada2)){
-			if( reg1_aux.n_vendas < reg2_aux.n_vendas && !feof(arq_entrada1) ){
-				leRegistro(&reg1_aux, arq_entrada1);
-			}
-			else if(reg1_aux.n_vendas > reg2_aux.n_vendas && !feof(arq_entrada2) ){
-				leRegistro(&reg2_aux, arq_entrada2);
-			}
-			else{   
-				if( (strcmp(reg1_aux.infos,reg2_aux.infos) < 0) && !feof(arq_entrada1) ){
-					escreveRegistro(&reg1_aux, arq_saida);
-					escreveRegistro(&reg2_aux, arq_saida);
-					leRegistro(&reg1_aux, arq_entrada1);
-					leRegistro(&reg2_aux, arq_entrada2);
-				}    
-				else if( (strcmp(reg1_aux.infos,reg2_aux.infos) > 0) && !feof(arq_entrada2) ){     
-					escreveRegistro(&reg2_aux, arq_saida);
-					escreveRegistro(&reg1_aux, arq_saida);
-					leRegistro(&reg1_aux, arq_entrada2);
-					leRegistro(&reg2_aux, arq_entrada2);
-				}
-				else{
-					if( (strcmp(reg1_aux.modelo,reg2_aux.modelo) < 0) && !feof(arq_entrada1) ){
-						escreveRegistro(&reg1_aux, arq_saida);
-						escreveRegistro(&reg2_aux, arq_saida);
-						leRegistro(&reg1_aux, arq_entrada2);
-						leRegistro(&reg2_aux, arq_entrada2);
-					}    
-					else if( (strcmp(reg1_aux.modelo,reg2_aux.modelo) > 0) && !feof(arq_entrada2) ){     
-						escreveRegistro(&reg2_aux, arq_saida);
-						escreveRegistro(&reg1_aux, arq_saida);
-						leRegistro(&reg1_aux, arq_entrada2);
-						leRegistro(&reg2_aux, arq_entrada2);
-					}
-					else{
-						if( (strcmp(reg1_aux.data,reg2_aux.data) < 0) && !feof(arq_entrada1) ){
-							escreveRegistro(&reg1_aux, arq_saida);
-							escreveRegistro(&reg2_aux, arq_saida);
-							leRegistro(&reg1_aux, arq_entrada1);
-							leRegistro(&reg2_aux, arq_entrada2);
-						}    
-						else if( (strcmp(reg1_aux.data,reg2_aux.data) > 0) && !feof(arq_entrada2) ){     
-							escreveRegistro(&reg2_aux, arq_saida);
-							escreveRegistro(&reg1_aux, arq_saida);
-							leRegistro(&reg1_aux, arq_entrada2);
-							leRegistro(&reg2_aux, arq_entrada2);
-						}
-						else{
-							escreveRegistro(&reg1_aux, arq_saida);
-							escreveRegistro(&reg2_aux, arq_saida);
-							leRegistro(&reg1_aux, arq_entrada1);
-							leRegistro(&reg2_aux, arq_entrada2);
-						}	
-					}
-				}
-			}			
-		}
-
-		/*while(flag == 0){
+		while(flag == 0){
 			if(reg1_aux.n_vendas < reg2_aux.n_vendas){
 				leRegistro(&reg1_aux, arq_entrada1);
 
@@ -378,7 +322,7 @@ int main(int argc, char *argv[]) {
 				if(feof(arq_entrada1) || feof(arq_entrada2)) 
 					flag = 1;
 			}
-		}*/
+		}
 
 		estado = '1';
 		fseek(arq_entrada1, 0, SEEK_SET);	
@@ -391,11 +335,6 @@ int main(int argc, char *argv[]) {
 		fclose(arq_entrada1);
 		fclose(arq_entrada2);
 		fclose(arq_saida);
-
-		printf("Arquivo gerado.\n");
-
-		if(flag_erro == 1)
-			printf("Falha no processamento.\n");
 	}
 		
 	else if(func == 6) /* Multiway merging */
@@ -419,8 +358,6 @@ int main(int argc, char *argv[]) {
 		multiway_merging(arqs_entrada, arq_saida, argc-3);
 		estado = '1';
 
-
-
 		for(r=0; r<(argc-3); r++) {
 			fseek(arqs_entrada[r], 0, SEEK_SET);
 			fwrite(&estado,1,1, arqs_entrada[r]);
@@ -429,11 +366,6 @@ int main(int argc, char *argv[]) {
 		fseek(arq_saida, 0, SEEK_SET);
 		fwrite(&estado,1,1, arq_saida);
 		fclose(arq_saida);
-
-		printf("Arquivo gerado.\n");
-
-		if(flag_erro == 1)
-			printf("Falha no processamento.\n");
 	}
 		
 	else if(func == 7) /* Ordenação externa */
@@ -447,7 +379,6 @@ int main(int argc, char *argv[]) {
 		fseek(arquivo_ordenar, 0, SEEK_SET);
 		estado = '0';
 		fwrite(&estado,1,1, arquivo_ordenar);
-
 
 		r = 0;
 		aux = 0;
@@ -563,12 +494,12 @@ int main(int argc, char *argv[]) {
 				
 			}
 
-		}
-
-		printf("Arquivo gerado.\n");
 		
 		if (flag_erro == 1)
 			printf("Falha no processamento.\n");
+		}
+		else
+			printf("Arquivo vazio.\n");
 	}
 
     return 0;
@@ -585,12 +516,12 @@ void heapify(registro arr[], int n, int i) {
 		largest = l;
 	}
 
-	if (r < n && arr[r].n_vendas > arr[largest].n_vendas){
+	if (r < n && arr[r].n_vendas > arr[largest].n_vendas) 
 		largest = r;  
-	}
+
 		
 	if (l < n && arr[l].n_vendas == arr[largest].n_vendas){
-		if(strcmp(arr[l].infos, arr[largest].infos) > 0){
+			if(strcmp(arr[l].infos, arr[largest].infos) > 0){
 			largest = l; 
 		}else{
 			if(strcmp(arr[l].infos, arr[largest].infos) == 0){
@@ -608,7 +539,7 @@ void heapify(registro arr[], int n, int i) {
 	}
 
 	if (r < n && arr[r].n_vendas == arr[largest].n_vendas){
-		if(strcmp(arr[r].infos, arr[largest].infos) > 0){
+			if(strcmp(arr[r].infos, arr[largest].infos) > 0){
 			largest = r; 
 		}else{
 			if(strcmp(arr[r].infos, arr[largest].infos) == 0){
@@ -648,6 +579,16 @@ void heapSort(registro arr[], int n)
 		heapify(arr, i, 0); 
     } 
 } 
+void status(FILE* arquivo){
+	char* status;
+	if(fread(status, 1, 1, arquivo) == 0){
+		*status = '1';
+		fwrite(status, 1, 1, arquivo);
+	}else{
+		*status = '0';
+		fwrite(status, 1, 1, arquivo);
+	}
+}
 
 int is_valid(const int *valido, int n){
     int i;
@@ -707,58 +648,58 @@ void multiway_merging(FILE **arquivo, FILE *arq_saida , int n){
 }
 
 void sort_merge(FILE* arquivo1, FILE* arquivo2, FILE* arquivo_saida){
-		registro reg1_aux, reg2_aux;
-		leRegistro(&reg2_aux, arquivo2);
-		leRegistro(&reg1_aux, arquivo1);
+	registro reg1_aux, reg2_aux;
+	leRegistro(&reg2_aux, arquivo2);
+	leRegistro(&reg1_aux, arquivo1);
 
-		while (!feof(arquivo1) || !feof(arquivo2)){
-			if( reg1_aux.n_vendas < reg2_aux.n_vendas && !feof(arquivo1) ){
+	while (!feof(arquivo1) || !feof(arquivo2)){
+		if( reg1_aux.n_vendas < reg2_aux.n_vendas && !feof(arquivo1) ){
+			escreveRegistro(&reg1_aux, arquivo_saida);
+			leRegistro(&reg1_aux, arquivo1);
+
+		}
+		else if(reg1_aux.n_vendas > reg2_aux.n_vendas && !feof(arquivo2) ){
+			escreveRegistro(&reg2_aux, arquivo_saida);
+			leRegistro(&reg2_aux, arquivo2);
+
+		}
+		else{   
+			if(reg1_aux.infos < reg2_aux.infos && !feof(arquivo1) ){
 				escreveRegistro(&reg1_aux, arquivo_saida);
 				leRegistro(&reg1_aux, arquivo1);
 
-			}
-			else if(reg1_aux.n_vendas > reg2_aux.n_vendas && !feof(arquivo2) ){
+			}    
+			else if(reg1_aux.infos > reg2_aux.infos && !feof(arquivo2) ){     
 				escreveRegistro(&reg2_aux, arquivo_saida);
 				leRegistro(&reg2_aux, arquivo2);
-
 			}
-			else{   
-				if(reg1_aux.infos < reg2_aux.infos && !feof(arquivo1) ){
+			else{
+				if(reg1_aux.modelo < reg2_aux.modelo && !feof(arquivo1) ){
 					escreveRegistro(&reg1_aux, arquivo_saida);
 					leRegistro(&reg1_aux, arquivo1);
-	
 				}    
-				else if(reg1_aux.infos > reg2_aux.infos && !feof(arquivo2) ){     
+				else if(reg1_aux.modelo > reg2_aux.modelo && !feof(arquivo2) ){   
 					escreveRegistro(&reg2_aux, arquivo_saida);
 					leRegistro(&reg2_aux, arquivo2);
 				}
 				else{
-					if(reg1_aux.modelo < reg2_aux.modelo && !feof(arquivo1) ){
+					if(reg1_aux.data < reg2_aux.data && !feof(arquivo1) ){
 						escreveRegistro(&reg1_aux, arquivo_saida);
 						leRegistro(&reg1_aux, arquivo1);
 					}    
-					else if(reg1_aux.modelo > reg2_aux.modelo && !feof(arquivo2) ){   
+					else if(reg1_aux.data > reg2_aux.data && !feof(arquivo2) ){     
 						escreveRegistro(&reg2_aux, arquivo_saida);
 						leRegistro(&reg2_aux, arquivo2);
 					}
 					else{
-						if(reg1_aux.data < reg2_aux.data && !feof(arquivo1) ){
-							escreveRegistro(&reg1_aux, arquivo_saida);
-							leRegistro(&reg1_aux, arquivo1);
-						}    
-						else if(reg1_aux.data > reg2_aux.data && !feof(arquivo2) ){     
-							escreveRegistro(&reg2_aux, arquivo_saida);
-							leRegistro(&reg2_aux, arquivo2);
-						}
-						else{
-							escreveRegistro(&reg1_aux, arquivo_saida);
-							escreveRegistro(&reg2_aux, arquivo_saida);
-							leRegistro(&reg1_aux, arquivo1);
-							leRegistro(&reg2_aux, arquivo2);
-						}	
-					}
+						escreveRegistro(&reg1_aux, arquivo_saida);
+						escreveRegistro(&reg2_aux, arquivo_saida);
+						leRegistro(&reg1_aux, arquivo1);
+						leRegistro(&reg2_aux, arquivo2);
+					}	
 				}
-			}			
-		}
+			}
+		}			
+	}
 
 }
